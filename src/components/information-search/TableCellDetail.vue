@@ -25,7 +25,7 @@
             </el-table>
         </div>
         <div class="dialog-footer">
-          <el-pagination></el-pagination>
+          <el-pagination :pageNum="pagination.pageNum" :page-size="pagination.pageSize" :total="pagination.total" @current-change="handlePagination"></el-pagination>
           <el-button @click="Close"><i class="iconfont icon-p-footer" ></i>关闭</el-button>
         </div>
       </div>
@@ -72,6 +72,15 @@
     const handleDelete = (index: number, row: User) => {
         console.log(index, row)
     }
+    const pagination = ref<any>({
+      pageNum: 1,
+      pageSize: 10,
+      total: 1000
+    })
+    const handlePagination = (currentPage: any) => {
+      pagination.value.pageNum = currentPage.pageNum
+      pagination.value.pageSize = currentPage.pageSize
+    }
     onMounted(() => {
         console.log(1111111,dialogFormVisible.value)
     })
@@ -112,6 +121,7 @@
     .dialog-inner{
       width: 90%;
       min-width: 800px;
+      max-width: 1500px;
       height: 90%;
       min-height: 400px;
       background-color: white;

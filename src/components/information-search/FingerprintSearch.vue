@@ -501,32 +501,31 @@
         padding: 10px;
         overflow: auto;
         .item{
+          margin: 5px;
+          border: 1px solid #efefef;
+          padding: 15px;
+          box-sizing: border-box;
+          text-align: center;
           img{
             width: 270px;
             height: 230px;
-            // aspect-ratio: 1;
           }
-          @media (min-width: 1901px){
+          @media screen and (min-width: 1901px){
             @include size(calc(100% / 4 - 20px),auto);
           }
-          @media (max-width: 1900px){
+          @media screen and (max-width: 1900px){
             @include size(calc(100% / 3 - 20px),auto);
           }
-          @media (max-width: 1600px){
+          @media screen and (max-width: 1600px){
             @include size(calc(100% / 2 - 20px),auto);
           }
-          @media (max-width: 1200px){
+          @media screen and (max-width: 1200px){
             @include size(calc(100% / 2 - 20px),auto);
             img{
               width: 90%;
               height: auto;
             }
           }
-          margin: 5px;
-          border: 1px solid #efefef;
-          padding: 15px;
-          box-sizing: border-box;
-          text-align: center;
           .single{
             font-size: 15px;
             // text-align: left;
@@ -697,5 +696,9 @@
 }
 :deep .el-table th.el-table__cell{
   color: #656565 !important;
+}
+
+:deep .el-table__inner-wrapper:before{
+  background-color: unset !important;
 }
 </style>

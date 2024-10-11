@@ -28,138 +28,149 @@
             </el-table>
         </div>
         <div class="dialog-footer">
-            <el-button><i class="iconfont icon-p-footer"></i>清空面板</el-button>
+            <el-pagination :pageNum="pagination.pageNum" :page-size="pagination.pageSize" :total="pagination.total" @current-change="handlePagination"></el-pagination>
+            <!-- <el-button><i class="iconfont icon-p-footer"></i>清空面板</el-button> -->
             <el-button><i class="iconfont icon-lujing-6"></i>比对</el-button>
-            <el-button><i class="iconfont icon-chanpinchaxun"></i>近似筛查</el-button>
+            <!-- <el-button><i class="iconfont icon-chanpinchaxun"></i>近似筛查</el-button> -->
           </div>
       </div>
     </div>
   </template>
   <script setup lang="ts">
-  import type { TableInstance } from 'element-plus'
-  import { ref, onMounted } from 'vue'
-  const dialogFormVisible = ref(true)
-  const emits = defineEmits(['close'])
-  const Close = () => {
-    emits('close')
-  }
-  interface User {
-    id: number
-    sortName: string
-    sortKind: string
-    approvalNumber: string
-    registrationNumber: string
-    sortSource: string
-  }
-  const multipleTableRef = ref<TableInstance>()
-  const multipleSelection = ref<User[]>([])
-  const tableData: User[] = [
-    {
-        id: 1,
-        sortName: 'string',
-        sortKind: 'string',
-        approvalNumber: 'string',
-        registrationNumber: 'string',
-        sortSource: 'string'
-    },
-    {
-        id: 2,
-        sortName: 'string',
-        sortKind: 'string',
-        approvalNumber: 'string',
-        registrationNumber: 'string',
-        sortSource: 'string'
-    },
-    {
-        id: 3,
-        sortName: 'string',
-        sortKind: 'string',
-        approvalNumber: 'string',
-        registrationNumber: 'string',
-        sortSource: 'string'
-    },
-    {
-        id: 4,
-        sortName: 'string',
-        sortKind: 'string',
-        approvalNumber: 'string',
-        registrationNumber: 'string',
-        sortSource: 'string'
-    },
-    {
-        id: 5,
-        sortName: 'string',
-        sortKind: 'string',
-        approvalNumber: 'string',
-        registrationNumber: 'string',
-        sortSource: 'string'
-    },
-    {
-        id: 6,
-        sortName: 'string',
-        sortKind: 'string',
-        approvalNumber: 'string',
-        registrationNumber: 'string',
-        sortSource: 'string'
-    },
-    {
-        id: 7,
-        sortName: 'string',
-        sortKind: 'string',
-        approvalNumber: 'string',
-        registrationNumber: 'string',
-        sortSource: 'string'
-    },
-    {
-        id: 8,
-        sortName: 'string',
-        sortKind: 'string',
-        approvalNumber: 'string',
-        registrationNumber: 'string',
-        sortSource: 'string'
-    },
-    {
-        id: 9,
-        sortName: 'string',
-        sortKind: 'string',
-        approvalNumber: 'string',
-        registrationNumber: 'string',
-        sortSource: 'string'
-    },
-    {
-        id: 10,
-        sortName: 'string',
-        sortKind: 'string',
-        approvalNumber: 'string',
-        registrationNumber: 'string',
-        sortSource: 'string'
-    },
-    {
-        id: 11,
-        sortName: 'string',
-        sortKind: 'string',
-        approvalNumber: 'string',
-        registrationNumber: 'string',
-        sortSource: 'string'
-    },
-    {
-        id: 12,
-        sortName: 'string',
-        sortKind: 'string',
-        approvalNumber: 'string',
-        registrationNumber: 'string',
-        sortSource: 'string'
-    },
-  ]
-  const handleSelectionChange = (val: User[]) => {
-    multipleSelection.value = val
-  }
-  const handleDelete = (index: number, row: User) => {
-    console.log(index, row)
-  }
-  onMounted(() => {
-    console.log(1111111,dialogFormVisible.value)
+    import ElPagination from '../common/ElPagination.vue'
+    import type { TableInstance } from 'element-plus'
+    import { ref, onMounted } from 'vue'
+    const dialogFormVisible = ref(true)
+    const emits = defineEmits(['close'])
+    const Close = () => {
+      emits('close')
+    }
+    interface User {
+      id: number
+      sortName: string
+      sortKind: string
+      approvalNumber: string
+      registrationNumber: string
+      sortSource: string
+    }
+    const multipleTableRef = ref<TableInstance>()
+    const multipleSelection = ref<User[]>([])
+    const tableData: User[] = [
+      {
+          id: 1,
+          sortName: 'string',
+          sortKind: 'string',
+          approvalNumber: 'string',
+          registrationNumber: 'string',
+          sortSource: 'string'
+      },
+      {
+          id: 2,
+          sortName: 'string',
+          sortKind: 'string',
+          approvalNumber: 'string',
+          registrationNumber: 'string',
+          sortSource: 'string'
+      },
+      {
+          id: 3,
+          sortName: 'string',
+          sortKind: 'string',
+          approvalNumber: 'string',
+          registrationNumber: 'string',
+          sortSource: 'string'
+      },
+      {
+          id: 4,
+          sortName: 'string',
+          sortKind: 'string',
+          approvalNumber: 'string',
+          registrationNumber: 'string',
+          sortSource: 'string'
+      },
+      {
+          id: 5,
+          sortName: 'string',
+          sortKind: 'string',
+          approvalNumber: 'string',
+          registrationNumber: 'string',
+          sortSource: 'string'
+      },
+      {
+          id: 6,
+          sortName: 'string',
+          sortKind: 'string',
+          approvalNumber: 'string',
+          registrationNumber: 'string',
+          sortSource: 'string'
+      },
+      {
+          id: 7,
+          sortName: 'string',
+          sortKind: 'string',
+          approvalNumber: 'string',
+          registrationNumber: 'string',
+          sortSource: 'string'
+      },
+      {
+          id: 8,
+          sortName: 'string',
+          sortKind: 'string',
+          approvalNumber: 'string',
+          registrationNumber: 'string',
+          sortSource: 'string'
+      },
+      {
+          id: 9,
+          sortName: 'string',
+          sortKind: 'string',
+          approvalNumber: 'string',
+          registrationNumber: 'string',
+          sortSource: 'string'
+      },
+      {
+          id: 10,
+          sortName: 'string',
+          sortKind: 'string',
+          approvalNumber: 'string',
+          registrationNumber: 'string',
+          sortSource: 'string'
+      },
+      {
+          id: 11,
+          sortName: 'string',
+          sortKind: 'string',
+          approvalNumber: 'string',
+          registrationNumber: 'string',
+          sortSource: 'string'
+      },
+      {
+          id: 12,
+          sortName: 'string',
+          sortKind: 'string',
+          approvalNumber: 'string',
+          registrationNumber: 'string',
+          sortSource: 'string'
+      },
+    ]
+    const handleSelectionChange = (val: User[]) => {
+      multipleSelection.value = val
+    }
+    const handleDelete = (index: number, row: User) => {
+      console.log(index, row)
+    }
+    onMounted(() => {
+      console.log(1111111,dialogFormVisible.value)
+    })
+    const pagination = ref<any>({
+      pageNum: 1,
+      pageSize: 10,
+      total: 1000
   })
+    const handlePagination = (currentPage: any) => {
+      pagination.value.pageNum = currentPage.pageNum
+      pagination.value.pageSize = currentPage.pageSize
+    }
   </script>
   
   
@@ -238,6 +249,7 @@
           border-top: 1px solid #e5e5e5;
           padding: 10px;
           text-align: right;
+          @include layout(center,space-between);
           .iconfont{
             padding-right: 10px;
             font-size: 18px;

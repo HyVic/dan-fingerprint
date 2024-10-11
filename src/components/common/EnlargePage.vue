@@ -1,32 +1,65 @@
 <template>
-    <!--   <apexchart
-        type="heatmap"
-        height="100%"
-        width="100%"
-        :options="chartOptions"
-        :series="series"
-      ></apexchart> -->
-      <div class="echarts-container" ref="viewRef">
-        <div class="tooltip">
-            <div class="title">
-                <div class="invalid"></div>HOM
+    <div class="dialog">
+      <div class="dialog-inner" ref="viewRef">
+        <div class="echarts-container" v-if="type==='site'" :class="[{'active0': status==='0'},{'active1': status==='1'}]">
+            <div class="tooltip">
+                <div class="title">
+                    <div class="ref" v-if="status==='0'"></div><span v-if="status==='0'">REF</span>
+                    <div class="alt" v-if="status==='0'"></div><span v-if="status==='0'">ALT</span>
+                    <div class="het"></div>{{ status==='0'? 'HET' : 'DIF' }}
+                </div>
+                <!-- <i class="iconfont icon-fangda1" @click="onEnlarge"></i> -->
+                <div>
+                    <i class="iconfont icon-xiazai1" title="下载" @click="onDownload"></i>
+                    <i class="iconfont icon-suoxiao1" title="缩小" @click="onClose"></i>
+                </div>
             </div>
-            <div>
-                <i class="iconfont icon-xiazai1" title="下载" @click="onDownload"></i>
-                <i class="iconfont icon-fangda1" title="放大" @click="onEnlarge"></i>
+            <div class="echarts-container-outer">
+                <div class="echarts-container-inner" v-for="(item,index) in allEcharts" :key="item.title">
+                    <span class="title">{{ item.title }}</span>
+                    <div class="line_container">
+                        <el-scrollbar>
+                            <div style="display: flex;" v-if="status==='0'">
+                                <div v-for="(list,i) in item.data" class="line_item" :class="[{'active_ref':list.name==='REF'},{'active_alt':list.name==='ALT'},{'active_het':list.name==='HET'}]" :key="i" @mouseover="showLineDetail = i"></div>
+                            </div>
+                            <div style="display: flex;" v-if="status==='1'">
+                                <div v-for="(list,i) in item.data" class="line_item" :class="[{'active_none':list.name==='REF' || list.name==='ALT'},{'active_dif':list.name==='HET'}]" :key="i" @click="showCellDetail = true"></div>
+                            </div>
+                        </el-scrollbar>
+                    </div>
+                </div>  
             </div>
         </div>
-        <div class="echarts-container-inner">
-            <div class="item-box" v-for="(item,index) in boxData" :class="{active: item.value}" :key="index"></div>
+        <div class="echarts-container" v-if="type==='heat'">
+            <div class="tooltip">
+                <div class="title">
+                    <div class="invalid"></div>HOM
+                </div>
+                <div>
+                    <i class="iconfont icon-xiazai1" title="下载" @click="onDownload"></i>
+                    <i class="iconfont icon-suoxiao1" title="缩小" @click="onClose"></i>
+                </div>
+            </div>
+            <div class="echarts-container-inner">
+                <div class="item-box" v-for="(item,index) in boxData" :class="{active: item.value}" :key="index"></div>
+            </div>
         </div>
+        <table-cell-detail v-if="showCellDetail" @close="showCellDetail = false"></table-cell-detail>
       </div>
-      <enlarge-page v-if="showEnlarge" @enlarge="showEnlarge = false" type="heat"></enlarge-page>
-    </template>
-<script setup lang="ts">
-    import EnlargePage from '../common/EnlargePage.vue'
-    import { onMounted, reactive, ref } from 'vue';
+    </div>
+  </template>
+  <script setup lang="ts">
+    import { ref, onMounted, reactive } from 'vue'
+    import TableCellDetail from '../information-search/TableCellDetail.vue'
     import html2canvas from 'html2canvas';
     const viewRef = ref<any>(null);
+    const showLineDetail = ref(-1);
+    const showCellDetail = ref(false);
+    defineProps({
+        status: String,
+        type: String,
+    })
+    const emits = defineEmits(['enlarge'])
     const boxData = reactive([
         {
                 value: true
@@ -44955,23 +44988,3780 @@
                 value: false
         },
     ]);
-    /* const boxData = reactive([{
-        value: false
-    },{
-        value: false
-    },{
-        value: true
-    },{
-        value: true
-    },
-    ]) */
-    const showEnlarge = ref(false);
-    const onEnlarge = () => {
-        showEnlarge.value = true;
-    };
+    const allEcharts = ref<any[]>([
+                {
+                    title: 1,
+                    data: [{
+                        name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'REF'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        },{
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'ALT'
+                        },{
+                            name: 'HET'
+                        }
+                    ]
+                },
+                {
+                    title: 2,
+                    data: [{
+                        name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }
+                    ]
+                },
+                {
+                    title: 3,
+                    data: [{
+                        name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }
+                    ]
+                },
+                {
+                    title: 4,
+                    data: [{
+                        name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }
+                    ]
+                },
+                {
+                    title: 5,
+                    data: [{
+                        name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }
+                    ]
+                },
+                {
+                    title: 6,
+                    data: [{
+                        name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }
+                    ]
+                },
+                {
+                    title: 7,
+                    data: [{
+                        name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }
+                    ]
+                },
+                {
+                    title: 8,
+                    data: [{
+                        name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }
+                    ]
+                },
+                {
+                    title: 9,
+                    data: [{
+                        name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }
+                    ]
+                },
+                {
+                    title: 10,
+                    data: [{
+                        name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        },{
+                            name: 'REF'
+                        }, {
+                            name: 'ALT'
+                        }, {
+                            name: 'HET'
+                        }, {
+                            name: 'ALT'
+                        }
+                    ]
+                }
+            ])
+    const onClose = () => {
+        console.log('enlarge')
+        emits('enlarge')
+    }
     const onDownload = () => {
         (async () => {
-            // hide.value = false
         try {
             const canvas = await html2canvas(viewRef.value, { useCORS: true });
             const img = canvas.toDataURL('image/png');
@@ -44986,59 +48776,189 @@
         })();
     }
     onMounted(() => {
-     console.log('boxData',boxData.length)
-    })            
-</script>
-    <style scoped lang="scss">
-     .echarts-container{
-        @media screen and (min-width: 2001px){
-            width: calc(55% - 40px);
-            padding: 20px 20px 10px 10px;
-        }
-        @media screen and (max-width: 2000px){
-            width: calc(97% - 40px);
-            padding: 20px;
-            margin: auto;
-        }
-        .tooltip{
+        console.log(1111111)
+    })
+  </script>
+  
+  
+<style scoped lang="scss">
+  @mixin layout($align,$justify){
+    display: flex;
+    align-items: $align;
+    justify-content: $justify;
+  }
+  .dialog{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(56, 52, 52, 0.62);
+    z-index: 3;
+    @include layout(center,center);
+    .dialog-inner{
+      width: 90%;
+      min-width: 800px;
+      max-width: 1500px;
+      height: auto;
+      max-height: 90%;
+      min-height: 400px;
+      background-color: white;
+      border-radius: 5px;
+    }
+  }
+  .echarts-container{
+    padding-bottom: 20px;
+    .tooltip{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 18px;
+        margin: 25px 25px 0;
+        .title{
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-size: 18px;
-            margin-bottom: 20px;
+            div:first-child{
+                margin-left: 0 !important;
+            }
+        }
+        .ref{
+            width: 40px;
+            height: 18px;
+            margin-right: 10px;
+            background-color: #3ba272;
+        }
+        .alt{
+            width: 40px;
+            height: 18px;
+            margin-right: 10px;
+            background-color: #fac858;
+            margin-left: 30px;
+        }
+        .het{
+            width: 40px;
+            height: 18px;
+            margin-right: 10px;
+            background-color: #ee6666;
+            margin-left: 30px;
+        }
+        .invalid{
+            width: 40px;
+            height: 18px;
+            margin-right: 10px;
+            background-color: #e7e7e7;
+        }
+        .iconfont{
+            margin-left: 20px;
+            font-size: 25px;
+            cursor: pointer;
+            &:hover{
+                color: #ee6666;
+            }
+        }
+    }
+    .echarts-container-outer{
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap; 
+        .echarts-container-inner{
+            width: calc(100% - 50px);
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
             .title{
+                width: 50px;
+                text-align: left;
                 display: flex;
                 align-items: center;
-                justify-content: space-between;
+                justify-content: center;
+                height: 100%;
+                // box-shadow: -2px 2px 5px 1px #5d857729;
+                font-size: 22px;
+                color: #757575;
+                background-color: #fafbfa52;
+                border: 1px solid #ecf0ef;
+                height: 48px;
             }
-            .invalid{
-                width: 40px;
-                height: 18px;
-                margin-right: 10px;
-                background-color: #e7e7e7;
+            .count{
+                width: 150px;
             }
-            .iconfont{
-                margin-left: 20px;
-                font-size: 25px;
-                cursor: pointer;
-                &:hover{
-                    color: #ee6666;
+            .line_container{
+                width: calc(100% - 52px);
+                height: 50px;
+                display: flex;
+                // box-shadow: 1px 2px 5px 1px rgba(58, 95, 82, 0.1607843137);
+                border: 1px solid #ecf0ef;
+                padding-top: 10px;
+                box-sizing: border-box;
+                :deep .el-scrollbar{
+                    padding: 0 10px;
                 }
             }
-        }
-        .echarts-container-inner{
-            width: 100%;
-            display: flex;
-            flex-wrap: wrap;
-            .item-box{
-                width: calc(0.5% - 1px);
-                aspect-ratio: 1;
-                margin: 0.5px;
-                background-color: #e7e7e7;
+            .line_item{
+                border-right: 1px solid;
+                height: 15px;
+                position: relative;
+                .line_detail{
+                    position: absolute;
+                    left: 10px;
+                    top: 10px;
+                    width: 200px;
+                    height: 200px;
+                    box-shadow: 1px 1px 5px 1px black;
+                    transition: ease all 0.3s;
+                    z-index: 1;
+                }
             }
-            .active{
-                background-color: #ee6666;
+            .active_ref{
+                border-color: #3ba272;
+            }
+            .active_alt{
+                border-color: #fac858;
+            }
+            .active_het{
+                border-color: #ee6666;
+                transform-origin: 50% 100%;
+                transform: rotate(180deg);
+            }
+            .active_dif{
+                border-color: #ee6666;
+                padding: 10px 1px 5px 0;
+            }
+            .active_none{
+                display: none
             }
         }
-     } 
-    </style>
+    }
+    .echarts-container-inner{
+        width: calc(100% - 50px);
+        margin: 7px 25px;
+        display: flex;
+        flex-wrap: wrap;
+        .item-box{
+            width: calc(0.5% - 1px);
+            aspect-ratio: 1;
+            margin: 0.5px;
+            background-color: #e7e7e7;
+        }
+        .active{
+            background-color: #ee6666;
+        }
+    }
+  }
+/*     .active0{
+        @media screen and (min-width: 2001px){
+            // width: calc(50% - 40px);
+            margin: 20px 20px 10px 10px;
+        }
+        @media screen and (max-width: 2000px){
+            width: calc(99% - 40px);
+            margin: 20px auto;
+        }
+    } 
+    .active1{
+        width: calc(90% - 40px);
+        margin: 20px auto;
+    } */
+</style>

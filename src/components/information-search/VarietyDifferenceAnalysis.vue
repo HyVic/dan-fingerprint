@@ -34,7 +34,7 @@
                         </el-table>
                       </el-scrollbar>
                     </div>
-                    <el-pagination :pageNum="pagination.pageNum" :page-size="pagination.pageSize" :total="pagination.total" @current-change="handleCurrentChange"></el-pagination>
+                    <el-pagination :pageNum="pagination.pageNum" :page-size="pagination.pageSize" :total="pagination.total" @current-change="handlePagination"></el-pagination>
                 </div>
                 <div class="search-result-snp common">
                     <div class="search-box">
@@ -67,7 +67,7 @@
                         </el-table>
                       </el-scrollbar>
                     </div>
-                    <el-pagination></el-pagination>
+                    <el-pagination :pageNum="pagination1.pageNum" :page-size="pagination1.pageSize" :total="pagination1.total" @current-change="handlePagination1"></el-pagination>
                 </div>
             </div>
             <div class="result" v-if="showResult">
@@ -103,10 +103,26 @@
                             :data="ChromosometableData"
                             style="width: 100%"
                         >
-                            <el-table-column property="number" label="染色体" width="90"/>
-                            <el-table-column property="validCount" label="有效位点的整体相似度"/>
-                            <el-table-column property="referCount" label="有效位点的纯合位点相似度" />
-                            <el-table-column property="altCount" label="有效位点的杂合位点相似度" />
+                            <el-table-column property="number" label="染色体" width="90">
+                              <template #default="scope">
+                                  <div class="common_cell" @click="getCellDetail('all')">{{ scope.row.number }}</div>
+                              </template>
+                            </el-table-column> 
+                            <el-table-column property="validCount" label="有效位点的整体相似度">
+                              <template #default="scope">
+                                  <div class="common_cell" @click="getCellDetail('all')">{{ scope.row.validCount }}</div>
+                              </template>
+                            </el-table-column> 
+                            <el-table-column property="referCount" label="有效位点的纯合位点相似度" >
+                              <template #default="scope">
+                                  <div class="common_cell" @click="getCellDetail('pure')">{{ scope.row.referCount }}</div>
+                              </template>
+                            </el-table-column> 
+                            <el-table-column property="altCount" label="有效位点的杂合位点相似度" >
+                              <template #default="scope">
+                                  <div class="common_cell" @click="getCellDetail('hybrid')">{{ scope.row.altCount }}</div>
+                              </template>
+                            </el-table-column> 
                         </el-table>
                       </el-scrollbar>
                     </div>
@@ -123,6 +139,7 @@
           </el-scrollbar>
         </div>
     </div>
+    <table-cell-detail v-if="showCellDetail" @close="showCellDetail = false"></table-cell-detail>
 </template>
     
 <script setup lang="ts">
@@ -131,11 +148,7 @@
   import ElPagination from '../common/ElPagination.vue'
   import { ref, onUnmounted, watchEffect, nextTick } from 'vue';
   import SiteEcharts from './SiteEcharts.vue'
-  const pagination = ref<any>({
-    pageNum: 1,
-    pageSize: 10,
-    total: 50
-  })
+  import TableCellDetail from '../information-search/TableCellDetail.vue'
   const uploadData = ref({
       searchName: '',
       searchNumber: ''
@@ -608,6 +621,29 @@
           })
       }
   }
+  const pagination = ref<any>({
+    pageNum: 1,
+    pageSize: 10,
+    total: 1000
+  })
+  const handlePagination = (currentPage: any) => {
+    pagination.value.pageNum = currentPage.pageNum
+    pagination.value.pageSize = currentPage.pageSize
+  }
+  const pagination1 = ref<any>({
+    pageNum: 1,
+    pageSize: 10,
+    total: 1000
+  })
+  const handlePagination1 = (currentPage: any) => {
+    pagination1.value.pageNum = currentPage.pageNum
+    pagination1.value.pageSize = currentPage.pageSize
+  }
+  const showCellDetail = ref(false);
+  const getCellDetail = (type:string) => {
+    console.log(type)
+    showCellDetail.value = true
+  }
   watchEffect(() => { 
       handleResize()
       window.addEventListener('resize', handleResize);
@@ -654,11 +690,21 @@
     }
     @media screen and (min-width: 1901px){
       :deep .el-scrollbar__view{
-        height: calc(100% - 10px);
+        height: calc(100% - 40px);
       }
       .chromosome{
         .table-info{
           height: 100% !important;
+          :deep .el-table td.el-table__cell div, :deep .el-table--enable-row-transition .el-table__body td.el-table__cell{
+            padding: 0;
+          }
+          .common_cell{
+            cursor: pointer;
+            padding: 7px 12px !important;
+            &:hover{
+              background-color: #e2edfb;
+            } 
+          }    
         }
       }
     }

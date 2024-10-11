@@ -29,47 +29,56 @@
             </el-table>
         </div>
         </div>
-        <el-pagination ref="paginationRef"></el-pagination>
+        <el-pagination ref="paginationRef" :pageNum="pagination.pageNum" :page-size="pagination.pageSize" :total="pagination.total" @current-change="handlePagination"></el-pagination>
     </div>
     <row-detail v-if="centerDialogVisible" @close="centerDialogVisible = false" :row="currentRow"></row-detail>
     <!-- <add-info v-if="addDialogVisible"></add-info> -->
      <AddInfo v-if="addDialogVisible" @close="addDialogVisible = false"></AddInfo>
 </template>
 <script setup lang="ts">
-import RowDetail from './RowDetail.vue'
-import AddInfo from '../information-management/AddInfo.vue';
-import ElPagination from '../common/ElPagination.vue'
-import { ref, watchEffect } from 'vue';
-interface DataType {
-    institutionName: string;
-    creditCode: number;
-    phone: number;
-    applicationType: string;
-    auditStatus: string;
-}
-const tableData: DataType[] = [{
-    institutionName: 'MSNP00001',
-    creditCode: 1,
-    phone: 111288396,
-    applicationType: '新增',
-    auditStatus: '审核通过'
-},];
-const centerDialogVisible = ref(false)
-const currentRow = ref<DataType>();
-const handleClick = (row: any) => {
-    centerDialogVisible.value = true;
-    currentRow.value = row;
-    console.log(row);
-}
-const addDialogVisible = ref(false)
-const addInfo = () => {
-    console.log('addInfo');
-    addDialogVisible.value = true;
-}
-const paginationRef = ref(null);
-watchEffect(() => {
-    console.log('mounted',paginationRef.value);
-});
+  import RowDetail from './RowDetail.vue'
+  import AddInfo from '../information-management/AddInfo.vue';
+  import ElPagination from '../common/ElPagination.vue'
+  import { ref, watchEffect } from 'vue';
+  interface DataType {
+      institutionName: string;
+      creditCode: number;
+      phone: number;
+      applicationType: string;
+      auditStatus: string;
+  }
+  const tableData: DataType[] = [{
+      institutionName: 'MSNP00001',
+      creditCode: 1,
+      phone: 111288396,
+      applicationType: '新增',
+      auditStatus: '审核通过'
+  },];
+  const centerDialogVisible = ref(false)
+  const currentRow = ref<DataType>();
+  const handleClick = (row: any) => {
+      centerDialogVisible.value = true;
+      currentRow.value = row;
+      console.log(row);
+  }
+  const addDialogVisible = ref(false)
+  const addInfo = () => {
+      console.log('addInfo');
+      addDialogVisible.value = true;
+  }
+  const paginationRef = ref(null);
+  watchEffect(() => {
+      console.log('mounted',paginationRef.value);
+  });
+  const pagination = ref<any>({
+      pageNum: 1,
+      pageSize: 10,
+      total: 1000
+  })
+  const handlePagination = (currentPage: any) => {
+      pagination.value.pageNum = currentPage.pageNum
+      pagination.value.pageSize = currentPage.pageSize
+  }
 </script>
 <style scoped lang="scss">
 @mixin layout($align-items, $justify-content){

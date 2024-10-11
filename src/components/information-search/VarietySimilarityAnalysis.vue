@@ -64,7 +64,7 @@
             </div>
             </div>           
             <div class="dialog-footer">
-              <el-pagination v-if="!showResult"></el-pagination>
+              <el-pagination v-if="!showResult" :pageNum="pagination.pageNum" :page-size="pagination.pageSize" :total="pagination.total" @current-change="handlePagination"></el-pagination>
               <div v-if="showResult"></div>
                     <!-- <el-button v-if="!showResult"><i class="iconfont icon-p-footer"></i>清空面板</el-button> -->
                     <el-button v-if="!showResult" @click="showResult = true"><i class="iconfont icon-lujing-6"></i>比对</el-button>
@@ -316,76 +316,80 @@
             validCount: '99.99%',
           },
           {
-            name: '1',
+            name: '2',
             validCount: '99.8%',
           },
           {
-            name: '1',
+            name: '3',
             validCount: '99.5%',
           },
           {
-            name: '1',
+            name: '4',
             validCount: '99.2%',
           },
           {
-            name: '1',
+            name: '5',
             validCount: '99.15%',
           },
           {
             name: '1',
-            validCount: '99.12%',
+            validCount: '99.99%',
+          },
+          {
+            name: '2',
+            validCount: '99.8%',
+          },
+          {
+            name: '3',
+            validCount: '99.5%',
+          },
+          {
+            name: '4',
+            validCount: '99.2%',
+          },
+          {
+            name: '5',
+            validCount: '99.15%',
           },
           {
             name: '1',
-            validCount: '99.1%',
+            validCount: '99.99%',
+          },
+          {
+            name: '2',
+            validCount: '99.8%',
+          },
+          {
+            name: '3',
+            validCount: '99.5%',
+          },
+          {
+            name: '4',
+            validCount: '99.2%',
+          },
+          {
+            name: '5',
+            validCount: '99.15%',
           },
           {
             name: '1',
-            validCount: '99%',
+            validCount: '99.99%',
           },
           {
-            name: '1',
-            validCount: '98%',
+            name: '2',
+            validCount: '99.8%',
           },
           {
-            name: '1',
-            validCount: '97%',
+            name: '3',
+            validCount: '99.5%',
           },
           {
-            name: '1',
-            validCount: '96%',
+            name: '4',
+            validCount: '99.2%',
           },
           {
-            name: '1',
-            validCount: '94%',
-          },
-          {
-            name: '1',
-            validCount: '92%',
-          },
-          {
-            name: '1',
-            validCount: '90%',
-          },
-          {
-            name: '1',
-            validCount: '88%',
-          },
-          {
-            name: '1',
-            validCount: '86%',
-          },
-          {
-            name: '1',
-            validCount: '84%',
-          },
-          {
-            name: '1',
-            validCount: '82%',
-          },
-          {
-            name: '1',
-            validCount: '80%',
+            name: '5',
+            validCount: '99.15%',
           },
         ],
         image: image
@@ -644,6 +648,15 @@
             }, 0);    
           })
       }
+  }
+  const pagination = ref<any>({
+      pageNum: 1,
+      pageSize: 10,
+      total: 1000
+  })
+  const handlePagination = (currentPage: any) => {
+      pagination.value.pageNum = currentPage.pageNum
+      pagination.value.pageSize = currentPage.pageSize
   }
   watchEffect(() => {
   /*     if(showResult.value) {

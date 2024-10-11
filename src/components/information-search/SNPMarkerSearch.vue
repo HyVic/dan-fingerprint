@@ -30,47 +30,56 @@
             </el-table>
         </div>
         </div>
-        <el-pagination></el-pagination>
+        <el-pagination :pageNum="pagination.pageNum" :page-size="pagination.pageSize" :total="pagination.total" @current-change="handlePagination"></el-pagination>
     </div>
     <row-detail v-if="centerDialogVisible" @close="centerDialogVisible = false" :row="currentRow"></row-detail>
 </template>
 <script setup lang="ts">
-import RowDetail from '../information-search/RowDetail.vue'
-// import type { ComponentSize } from 'element-plus'
-import ElPagination from '../common/ElPagination.vue'
-import { ref } from 'vue';
-const searchNumber = ref('');
-const submitSearch = () => {}
-const reset = () => {}
-interface DataType {
-    siteNumner: string;
-    chromosome: number;
-    physicalPosition: number;
-    variantSequence: string;
-}
-const tableData: DataType[] = [{
-    siteNumner: 'MSNP00001',
-    chromosome: 1,
-    physicalPosition: 111288396,
-    variantSequence: 'AGGGGCAGGGAACCAAGACAACTCCTTTCAGGGCAGGAGCAGGGAACCAAGTCGAAACAG[A/G]GGAGAGTTTGACCTTCTGGATGATTGATATGGAGTATATATGAGGCTATGCACGTCGTAG'
-},{
-    siteNumner: 'MSNP00002',
-    chromosome: 2,
-    physicalPosition: 156554418,
-    variantSequence: 'AAAATTAATAGTTGGACATACATTTGGAATCAATGCACTGGTCTAGCAGTGCTGCAAGTA[T/G]CATGGAGTCTAAGCCACCGGAGAAGAGGACTGCTATTGGGGCTGACTCTCCGTCCTCAGA'
-},{
-    siteNumner: 'MSNP00003',
-    chromosome: 3,
-    physicalPosition: 156554419,
-    variantSequence: 'AAAATTAATAGTTGGACATACATTTGGAATCAATGCACTGGTCTAGCAGTGCTGCAAGTA[T/G]CATGGAGTCTAAGCCACCGGAGAAGAGGACTGCTATTGGGGCTGACTCTCCGTCCTCAGA'
-}];
-const centerDialogVisible = ref(false)
-const currentRow = ref<DataType>();
-const handleClick = (row: any) => {
-    centerDialogVisible.value = true;
-    currentRow.value = row;
-    console.log(row);
-}
+  import RowDetail from '../information-search/RowDetail.vue'
+  // import type { ComponentSize } from 'element-plus'
+  import ElPagination from '../common/ElPagination.vue'
+  import { ref } from 'vue';
+  const searchNumber = ref('');
+  const submitSearch = () => {}
+  const reset = () => {}
+  interface DataType {
+      siteNumner: string;
+      chromosome: number;
+      physicalPosition: number;
+      variantSequence: string;
+  }
+  const tableData: DataType[] = [{
+      siteNumner: 'MSNP00001',
+      chromosome: 1,
+      physicalPosition: 111288396,
+      variantSequence: 'AGGGGCAGGGAACCAAGACAACTCCTTTCAGGGCAGGAGCAGGGAACCAAGTCGAAACAG[A/G]GGAGAGTTTGACCTTCTGGATGATTGATATGGAGTATATATGAGGCTATGCACGTCGTAG'
+  },{
+      siteNumner: 'MSNP00002',
+      chromosome: 2,
+      physicalPosition: 156554418,
+      variantSequence: 'AAAATTAATAGTTGGACATACATTTGGAATCAATGCACTGGTCTAGCAGTGCTGCAAGTA[T/G]CATGGAGTCTAAGCCACCGGAGAAGAGGACTGCTATTGGGGCTGACTCTCCGTCCTCAGA'
+  },{
+      siteNumner: 'MSNP00003',
+      chromosome: 3,
+      physicalPosition: 156554419,
+      variantSequence: 'AAAATTAATAGTTGGACATACATTTGGAATCAATGCACTGGTCTAGCAGTGCTGCAAGTA[T/G]CATGGAGTCTAAGCCACCGGAGAAGAGGACTGCTATTGGGGCTGACTCTCCGTCCTCAGA'
+  }];
+  const centerDialogVisible = ref(false)
+  const currentRow = ref<DataType>();
+  const handleClick = (row: any) => {
+      centerDialogVisible.value = true;
+      currentRow.value = row;
+      console.log(row);
+  }
+  const pagination = ref<any>({
+      pageNum: 1,
+      pageSize: 10,
+      total: 1000
+  })
+  const handlePagination = (currentPage: any) => {
+      pagination.value.pageNum = currentPage.pageNum
+      pagination.value.pageSize = currentPage.pageSize
+  }
 </script>
 <style scoped lang="scss">
 @mixin layout($align-items, $justify-content){

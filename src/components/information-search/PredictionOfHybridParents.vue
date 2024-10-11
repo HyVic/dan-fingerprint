@@ -75,7 +75,7 @@
                 </div>
             </div>           
             <div class="dialog-footer">
-                <el-pagination v-if="!showResult"></el-pagination>
+                <el-pagination v-if="!showResult" :pageNum="pagination.pageNum" :page-size="pagination.pageSize" :total="pagination.total" @current-change="handlePagination"></el-pagination>
                 <div v-if="showResult"></div>
                     <!-- <el-button v-if="!showResult"><i class="iconfont icon-p-footer"></i>清空面板</el-button> -->
                     <el-button v-if="!showResult" @click="showResult = true"><i class="iconfont icon-lujing-6"></i>比对</el-button>
@@ -776,11 +776,20 @@ const reset = (type: number) => {
       ]
     },
   ])
-const handleResize = () => {
+  const handleResize = () => {
     if(showResult.value) {
-        // (document as any).getElementById('images').style.height = `${(document as any).getElementById('chromosome').clientHeight - 20}px`
+            // (document as any).getElementById('images').style.height = `${(document as any).getElementById('chromosome').clientHeight - 20}px`
     }
-}
+  }
+  const pagination = ref<any>({
+      pageNum: 1,
+      pageSize: 10,
+      total: 1000
+  })
+  const handlePagination = (currentPage: any) => {
+      pagination.value.pageNum = currentPage.pageNum
+      pagination.value.pageSize = currentPage.pageSize
+  }
 watchEffect(() => {
     if(showResult.value) {
         nextTick(() => {
