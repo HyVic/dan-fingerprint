@@ -95,12 +95,21 @@
                     </div>
                   </div>
                   <div class="chromosome common" id="chromosome">
+                    <el-upload
+                    style="display: flex;"
+                      :on-change="handleUpload"
+                      accept="xls,xlsx"
+                      :auto-upload="false"
+                      :multiple="true"
+                    >
+                    <el-button type="primary">Click to upload</el-button>
+                    </el-upload>
                     <div class="table-info">
                       <el-scrollbar height="100%">
                         <el-table 
                             stripe 
                             ref="multipleTableRef"
-                            :data="ChromosometableData"
+                            :data="uploadTableData"
                             style="width: 100%"
                         >
                             <el-table-column property="number" label="染色体" width="90">
@@ -143,37 +152,38 @@
 </template>
     
 <script setup lang="ts">
-  import image from '../../assets/RZ2300021-SNP-2_vs_RZ2300002-SNP-2.png'
-  import type { TableInstance } from 'element-plus'
-  import ElPagination from '../common/ElPagination.vue'
-  import { ref, onUnmounted, watchEffect, nextTick } from 'vue';
-  import SiteEcharts from './SiteEcharts.vue'
-  import TableCellDetail from '../information-search/TableCellDetail.vue'
-  const uploadData = ref({
-      searchName: '',
-      searchNumber: ''
-  })
-  const exitData = ref({
-      searchName: '',
-      searchNumber: ''
-  })
-  const submitSearch = (type: number) => {
-      console.log(type)
-      if(type === 1) {
-          console.log(uploadData.value)    
-      } else {
-          console.log(exitData.value)
-      }
-  }
-  const reset = (type: number) => {
-      if(type === 1) {
-          uploadData.value.searchName = ''
-          uploadData.value.searchNumber = ''
-      } else {
-          exitData.value.searchName = ''
-          exitData.value.searchNumber = ''
-      }
-  }
+    import image from '../../assets/RZ2300021-SNP-2_vs_RZ2300002-SNP-2.png'
+    import type { TableInstance } from 'element-plus'
+    import ElPagination from '../common/ElPagination.vue'
+    import { ref, onUnmounted, watchEffect, nextTick } from 'vue';
+    import SiteEcharts from './SiteEcharts.vue'
+    import TableCellDetail from '../information-search/TableCellDetail.vue'
+    import * as XLSX from 'xlsx'
+    const uploadData = ref({
+        searchName: '',
+        searchNumber: ''
+    })
+    const exitData = ref({
+        searchName: '',
+        searchNumber: ''
+    })
+    const submitSearch = (type: number) => {
+        console.log(type)
+        if(type === 1) {
+            console.log(uploadData.value)    
+        } else {
+            console.log(exitData.value)
+        }
+    }
+    const reset = (type: number) => {
+        if(type === 1) {
+            uploadData.value.searchName = ''
+            uploadData.value.searchNumber = ''
+        } else {
+            exitData.value.searchName = ''
+            exitData.value.searchNumber = ''
+        }
+    }
     interface User {
       id: number
       sortName: string
@@ -484,173 +494,225 @@
       referCount:string,
       altCount:string,
     }
-  const ChromosometableData: ChromosomeInfo[] = [
-    {
-      number: '1',
-      validCount: '58.84% (1664)',
-      referCount: '59.12% (1634)',
-      altCount: '1.06% (30)',
-    },
-    {
-      number: '2',
-      validCount: '60.00% (1314)',
-      referCount: '60.56% (1282)',
-      altCount: '1.46% (32)',
-    },
-    {
-      number: '3',
-      validCount: '46.60% (1008)',
-      referCount: '59.24% (994)',
-      altCount: '0.65% (14)',
-    },
-    {
-      number: '4',
-      validCount: '55.03% (1247)',
-      referCount: '55.72% (1227)',
-      altCount: '0.88% (20)',
-    },
-    {
-      number: '5',
-      validCount: '50.54% (1022)',
-      referCount: '50.43% (1005)',
-      altCount: '0.84% (17)',
-    },
-    {
-      number: '6',
-      validCount: '59.43% (882)',
-      referCount: '59.28% (878)',
-      altCount: '0.27% (4)',
-    },
-    {
-      number: '7',
-      validCount: '53.31% (886)',
-      referCount: '52.57% (868)',
-      altCount: '1.08% (18)',
-    },
-    {
-      number: '8',
-      validCount: '46.02% (775)',
-      referCount: '68.52% (766)',
-      altCount: '0.53% (9)',
-    },
-    {
-      number: '9',
-      validCount: '56.43% (825)',
-      referCount: '57.45% (821)',
-      altCount: '0.27% (4)',
-    },
-    {
-      number: '10',
-      validCount: '55.64% (774)',
-      referCount: '56.33% (765)',
-      altCount: '0.65% (9)',
-    },
-    {
-      number: '11',
-      validCount: '58.84% (1664)',
-      referCount: '59.12% (1634)',
-      altCount: '1.06% (30)',
-    },
-    {
-      number: '12',
-      validCount: '60.00% (1314)',
-      referCount: '60.56% (1282)',
-      altCount: '1.46% (32)',
-    },
-    {
-      number: '13',
-      validCount: '46.60% (1008)',
-      referCount: '59.24% (994)',
-      altCount: '0.65% (14)',
-    },
-    {
-      number: '14',
-      validCount: '55.03% (1247)',
-      referCount: '55.72% (1227)',
-      altCount: '0.88% (20)',
-    },
-    {
-      number: '15',
-      validCount: '50.54% (1022)',
-      referCount: '50.43% (1005)',
-      altCount: '0.84% (17)',
-    },
-    {
-      number: '16',
-      validCount: '59.43% (882)',
-      referCount: '59.28% (878)',
-      altCount: '0.27% (4)',
-    },
-    {
-      number: '17',
-      validCount: '53.31% (886)',
-      referCount: '52.57% (868)',
-      altCount: '1.08% (18)',
-    },
-    {
-      number: '18',
-      validCount: '46.02% (775)',
-      referCount: '68.52% (766)',
-      altCount: '0.53% (9)',
-    },
-    {
-      number: '19',
-      validCount: '56.43% (825)',
-      referCount: '57.45% (821)',
-      altCount: '0.27% (4)',
-    },
-    {
-      number: '20',
-      validCount: '55.64% (774)',
-      referCount: '56.33% (765)',
-      altCount: '0.65% (9)',
-    },
-  ]
+    const ChromosometableData: ChromosomeInfo[] = [
+      {
+        number: '1',
+        validCount: '58.84% (1664)',
+        referCount: '59.12% (1634)',
+        altCount: '1.06% (30)',
+      },
+      {
+        number: '2',
+        validCount: '60.00% (1314)',
+        referCount: '60.56% (1282)',
+        altCount: '1.46% (32)',
+      },
+      {
+        number: '3',
+        validCount: '46.60% (1008)',
+        referCount: '59.24% (994)',
+        altCount: '0.65% (14)',
+      },
+      {
+        number: '4',
+        validCount: '55.03% (1247)',
+        referCount: '55.72% (1227)',
+        altCount: '0.88% (20)',
+      },
+      {
+        number: '5',
+        validCount: '50.54% (1022)',
+        referCount: '50.43% (1005)',
+        altCount: '0.84% (17)',
+      },
+      {
+        number: '6',
+        validCount: '59.43% (882)',
+        referCount: '59.28% (878)',
+        altCount: '0.27% (4)',
+      },
+      {
+        number: '7',
+        validCount: '53.31% (886)',
+        referCount: '52.57% (868)',
+        altCount: '1.08% (18)',
+      },
+      {
+        number: '8',
+        validCount: '46.02% (775)',
+        referCount: '68.52% (766)',
+        altCount: '0.53% (9)',
+      },
+      {
+        number: '9',
+        validCount: '56.43% (825)',
+        referCount: '57.45% (821)',
+        altCount: '0.27% (4)',
+      },
+      {
+        number: '10',
+        validCount: '55.64% (774)',
+        referCount: '56.33% (765)',
+        altCount: '0.65% (9)',
+      },
+      {
+        number: '11',
+        validCount: '58.84% (1664)',
+        referCount: '59.12% (1634)',
+        altCount: '1.06% (30)',
+      },
+      {
+        number: '12',
+        validCount: '60.00% (1314)',
+        referCount: '60.56% (1282)',
+        altCount: '1.46% (32)',
+      },
+      {
+        number: '13',
+        validCount: '46.60% (1008)',
+        referCount: '59.24% (994)',
+        altCount: '0.65% (14)',
+      },
+      {
+        number: '14',
+        validCount: '55.03% (1247)',
+        referCount: '55.72% (1227)',
+        altCount: '0.88% (20)',
+      },
+      {
+        number: '15',
+        validCount: '50.54% (1022)',
+        referCount: '50.43% (1005)',
+        altCount: '0.84% (17)',
+      },
+      {
+        number: '16',
+        validCount: '59.43% (882)',
+        referCount: '59.28% (878)',
+        altCount: '0.27% (4)',
+      },
+      {
+        number: '17',
+        validCount: '53.31% (886)',
+        referCount: '52.57% (868)',
+        altCount: '1.08% (18)',
+      },
+      {
+        number: '18',
+        validCount: '46.02% (775)',
+        referCount: '68.52% (766)',
+        altCount: '0.53% (9)',
+      },
+      {
+        number: '19',
+        validCount: '56.43% (825)',
+        referCount: '57.45% (821)',
+        altCount: '0.27% (4)',
+      },
+      {
+        number: '20',
+        validCount: '55.64% (774)',
+        referCount: '56.33% (765)',
+        altCount: '0.65% (9)',
+      },
+    ]
 
-  const handleResize = () => {
-    if(showResult.value) {
-          nextTick(() => {
-            setTimeout(() => {
-              if(window.innerWidth>=1500 && window.innerWidth < 1900) {
-                (document as any).getElementById('images').style.height = `${(document as any).getElementById('all-info').clientHeight - 10}px`; 
-              }   
-              if(window.innerWidth>=1901) {
-                (document as any).getElementById('chromosome').style.height = `${(document as any).getElementById('left').clientHeight - 12}px`;   
-              }
-            }, 0);
-          })
+    const handleResize = () => {
+      if(showResult.value) {
+            nextTick(() => {
+              setTimeout(() => {
+                if(window.innerWidth>=1500 && window.innerWidth < 1900) {
+                  (document as any).getElementById('images').style.height = `${(document as any).getElementById('all-info').clientHeight - 10}px`; 
+                }   
+                if(window.innerWidth>=1901) {
+                  (document as any).getElementById('chromosome').style.height = `${(document as any).getElementById('left').clientHeight - 12}px`;   
+                }
+              }, 0);
+            })
+        }
+    }
+    const pagination = ref<any>({
+      pageNum: 1,
+      pageSize: 10,
+      total: 1000
+    })
+    const handlePagination = (currentPage: any) => {
+      pagination.value.pageNum = currentPage.pageNum
+      pagination.value.pageSize = currentPage.pageSize
+    }
+    const pagination1 = ref<any>({
+      pageNum: 1,
+      pageSize: 10,
+      total: 1000
+    })
+    const handlePagination1 = (currentPage: any) => {
+      pagination1.value.pageNum = currentPage.pageNum
+      pagination1.value.pageSize = currentPage.pageSize
+    }
+    const showCellDetail = ref(false);
+    const getCellDetail = (type:string) => {
+      console.log(type)
+      showCellDetail.value = true
+    }
+
+
+
+    const uploadTableData = ref<any>([])
+ 
+//读取excel文件
+    const readFile = (file) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsArrayBuffer(file.raw)
+        reader.onload = (e) => {
+          resolve(e.target.result)
+        }
+        reader.onerror = (e) => {
+          reject(e)
+        }
+      })
+    }
+    
+    const handleUpload = async (file) => {
+      const data = await getXlsxData(file)
+      uploadTableData.value = translateField(data)
+    }
+    
+    //读取表格数据
+    const getXlsxData = async (file) => {
+      const dataBinary = await readFile(file)
+      const workBook = XLSX.read(dataBinary)
+      const workSheet = workBook.Sheets[workBook.SheetNames[0]]
+      const data = XLSX.utils.sheet_to_json(workSheet)
+      const newData = data.slice(0, data.length - 1)
+      return newData
+    }
+    
+    //映射字段
+    const translateField = (data) => {
+      let arr = []
+      const cnToEn = {
+        chrom: 'number',
+        整体相似度: 'validCount',
+        纯合相似度: 'referCount',
+        杂合相似度: 'altCount'
       }
-  }
-  const pagination = ref<any>({
-    pageNum: 1,
-    pageSize: 10,
-    total: 1000
-  })
-  const handlePagination = (currentPage: any) => {
-    pagination.value.pageNum = currentPage.pageNum
-    pagination.value.pageSize = currentPage.pageSize
-  }
-  const pagination1 = ref<any>({
-    pageNum: 1,
-    pageSize: 10,
-    total: 1000
-  })
-  const handlePagination1 = (currentPage: any) => {
-    pagination1.value.pageNum = currentPage.pageNum
-    pagination1.value.pageSize = currentPage.pageSize
-  }
-  const showCellDetail = ref(false);
-  const getCellDetail = (type:string) => {
-    console.log(type)
-    showCellDetail.value = true
-  }
-  watchEffect(() => { 
-      handleResize()
-      window.addEventListener('resize', handleResize);
-  })
-  onUnmounted(() => {
-    window.removeEventListener('resize', handleResize);
-  });
+      data.forEach((item) => {
+        const arrItem = {}
+        Object.keys(item).forEach((key) => {
+          arrItem[cnToEn[key]] = item[key]
+        })
+        arr.push(arrItem)
+      })
+      return arr
+    }
+    watchEffect(() => { 
+        handleResize()
+        window.addEventListener('resize', handleResize);
+    })
+    onUnmounted(() => {
+      window.removeEventListener('resize', handleResize);
+    });
 </script>
 <style scoped lang="scss">
 @mixin layout($align-items, $justify-content){
