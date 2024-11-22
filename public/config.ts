@@ -1,5 +1,5 @@
 const config = {
-  apiUrl: 'http://localhost:8080/api'
+  apiUrl: 'http://183.221.124.252:8000/'
 }
 
 export default config

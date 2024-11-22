@@ -186,7 +186,7 @@ import { ref, watchEffect, onUnmounted, nextTick, onMounted } from "vue";
 
 const searchName = ref("");
 const searchNumber = ref("");
-const sortName = ref("");
+const sortName = ref("品种名");
 const showCellDetail = ref(false);
 const submitSearch = () => {
   sortName.value = searchName.value;

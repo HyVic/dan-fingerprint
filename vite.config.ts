@@ -25,46 +25,19 @@ export default defineConfig({
       restart: ['*.config.[jt]s', '**/config/*.[jt]s', '*.config.cjs']
     }),
     legacy()
-/*     legacy({
-      targets: ['defaults', 'ie >= 11', 'chrome 52'],  //需要兼容的目标列表，可以设置多个
-      additionalLegacyPolyfills: ['regenerator-runtime/runtime'],
-      renderLegacyChunks: true,
-      polyfills: [
-        'es.symbol',
-        'es.array.filter',
-        'es.promise',
-        'es.promise.finally',
-        'es/map',
-        'es/set',
-        'es.array.for-each',
-        'es.object.define-properties',
-        'es.object.define-property',
-        'es.object.get-own-property-descriptor',
-        'es.object.get-own-property-descriptors',
-        'es.object.keys',
-        'es.object.to-string',
-        'web.dom-collections.for-each',
-        'esnext.global-this',
-        'esnext.string.match-all'
-      ]
-    }) */
   ],
   css: {
     devSourcemap: true
   },
-  /* server: {
+  server: {
     proxy: {
       '/api': {
-        target: 'https://echarts.apache.org/examples',
+        target: 'http://183.221.124.252:8000',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
-          // '^/echarts': ''
-        
+        // rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
-  } */
-  base: './',
-  //打包后的引入css文件时前加./
+  },
   build: {
     //打包文件名称
     outDir: 'dist',

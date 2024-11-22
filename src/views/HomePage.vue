@@ -25,7 +25,7 @@ const showUploadData = ref(false)
     {
       icon: 'icon-chakanxiangqingjiaguxiangqing',
       title: '品种查询',
-      path: '/fingerprint',
+      path: 'FingerprintSearch',
       disabled: false  
     },
     {
@@ -46,14 +46,16 @@ const showUploadData = ref(false)
     {
       icon: 'icon-chanpinchaxun',
       title: 'SNP查询',
-      path: '/snpmarker',
+      path: 'SNPMarkerSearch',
       disabled: false    
     },
   ])
   const handleClick = (item: any,index: number) => {
     console.log(item.title)
     if(item.path){
-      router.push(item.path)
+      router.push({
+        name: item.path
+      })
     }
     if(index==3) {
       showUploadData.value = true
