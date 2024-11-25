@@ -123,9 +123,9 @@ onMounted(() => {
   postRegister(obj).then((res) => {
     console.log("res.data====", res.data);
   }); */
-  getUserInfo().then((res) => {
+  /* getUserInfo().then((res) => {
     console.log("res.data====", res.data);
-  });
+  }); */
   userInfo.value.code = Math.random().toString(10).substring(2, 6);
 });
 </script>
