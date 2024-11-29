@@ -1,5 +1,7 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
+
 import vue from '@vitejs/plugin-vue'
+import configUrl from './public/config'
 // 压缩gzip
 import viteCompression from 'vite-plugin-compression'
 // 打包进度
@@ -9,6 +11,7 @@ import ViteRestart from 'vite-plugin-restart'
 import legacy from '@vitejs/plugin-legacy'
 // https://vitejs.dev/config/
 export default defineConfig({
+  
   base:"./",
   plugins: [
     vue(),
@@ -29,15 +32,14 @@ export default defineConfig({
   css: {
     devSourcemap: true
   },
-  server: {
+/*   server: {
     proxy: {
       '/api': {
-        target: 'http://183.221.124.252:8000',
-        changeOrigin: true,
-        // rewrite: (path) => path.replace(/^\/api/, '')
+        target: configUrl.apiUrl,
+        changeOrigin: true
       }
     }
-  },
+  }, */
   build: {
     //打包文件名称
     outDir: 'dist',
@@ -51,3 +53,4 @@ export default defineConfig({
     },
   }
 })
+

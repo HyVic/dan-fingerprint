@@ -54,10 +54,22 @@ const router = createRouter({
                     component: () => import('../components/information-search/PredictionOfHybridParents.vue')
                 },
                 {
-                    path: '/information-management',
+                    path: '/account/enterprise-management',
                     name: 'AccountInformationManagement',
                     meta: { title: "企业账户管理" },
                     component: () => import('../components/information-management/AccountInformationManagement.vue')
+                },
+                {
+                    path: '/account/user-management',
+                    name: 'UserManagement',
+                    meta: { title: "用户管理" },
+                    component: () => import('../components/information-management/UserManagement.vue')
+                },
+                {
+                    path: '/account/role-management',
+                    name: 'RoleManagement',
+                    meta: { title: "角色管理" },
+                    component: () => import('../components/information-management/RoleManagement.vue')
                 }
             ]
         },
@@ -69,6 +81,7 @@ const router = createRouter({
 })
 router.beforeEach((to, from, next) => {
     if (to.name === 'LoginPage') {
+        localStorage.removeItem('token')
         next()
     } else {
         const token = localStorage.getItem('token')

@@ -113,7 +113,7 @@ const showUploadData = ref(false)
       @include layout(center, center);
       border-radius: 10px;
       .iconfont{
-        font-size: 100px;
+        font-size: 5rem;
         color: green;
       }
     }

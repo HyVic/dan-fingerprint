@@ -47,6 +47,7 @@ const http = new HttpRequest()
 export default http
  */
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import router from "../router";
 import configUrl from '../../public/config'
 //声明模型参数
 type TAxiosOption = {
@@ -57,9 +58,10 @@ type TAxiosOption = {
 //配置赋值
 const config: TAxiosOption = {
     timeout: 5000,
-    baseURL: configUrl.apiUrl,    // 本地api接口地址
+    baseURL: configUrl.apiUrl,
+    // baseURL: import.meta.env.VITE_APP_BASE_API   // 本地api接口地址
 }
-
+console.log('import.meta.env', import.meta.env.VITE_APP_BASE_API, configUrl.apiUrl)
 class Http {
     service;
     constructor(config: TAxiosOption) {
@@ -67,8 +69,10 @@ class Http {
 
         /* 请求拦截 */
         this.service.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-            //可以在这里做请求拦截处理   如：请求接口前，需要传入的token
-            // debugger;
+            let token = localStorage.getItem('token')
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`
+            }
             return config
         }, (error: any) => {
             return Promise.reject(error);
@@ -78,19 +82,27 @@ class Http {
         this.service.interceptors.response.use((response: AxiosResponse<any>) => {
             // debugger;
             console.log('response==>', response.data)
+            // return response.data
             switch (response.data.code) {
+                case -1:
+                    return response.data;
                 case 0:
                     return response.data;
                 case 200:
                     return response.data;
-                case 500:
-                    //这里面可以写错误提示，反馈给前端
+                case 2001:
                     return response.data;
-                case 99991:
+                case 2003:
                     return response.data;
-                case 99992:
+                case 2007:
+                    router.push({ name: 'LoginPage' })
+                    localStorage.removeItem('token')
+                    break;
+                case 2005: //认证失败
                     return response.data;
-                case 99998:
+                case 4001: //资源不存在
+                    return response.data;
+                case 6001: //品种不存在
                     return response.data;
                 default:
                     break;

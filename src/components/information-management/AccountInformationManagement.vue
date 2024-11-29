@@ -36,8 +36,8 @@
      <AddInfo v-if="addDialogVisible" @close="addDialogVisible = false"></AddInfo>
 </template>
 <script setup lang="ts">
-  import RowDetail from './RowDetail.vue'
-  import AddInfo from '../information-management/AddInfo.vue';
+  import RowDetail from './dialog/RowDetail.vue'
+  import AddInfo from './dialog/AddInfo.vue';
   import ElPagination from '../common/ElPagination.vue'
   import { ref, watchEffect } from 'vue';
   interface DataType {

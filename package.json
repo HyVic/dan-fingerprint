@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite --host 192.168.3.88 --port 8081",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "serve": "vite --mode production"
   },
   "dependencies": {
     "axios": "^1.7.7",
@@ -14,7 +15,7 @@
     "element-plus": "^2.8.1",
     "html2canvas": "^1.4.1",
     "pinia": "^2.2.2",
-    "pinia-plugin-persistedstate": "^4.0.0",
+    "pinia-plugin-persistedstate": "^4.0.1",
     "terser": "^5.36.0",
     "vue": "^3.4.37",
     "vue-router": "^4.4.3",

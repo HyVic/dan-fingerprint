@@ -6,6 +6,34 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "10136241",
+      "name": "重置密码",
+      "font_class": "zhongzhimima",
+      "unicode": "e648",
+      "unicode_decimal": 58952
+    },
+    {
+      "icon_id": "12874154",
+      "name": "重置密码",
+      "font_class": "zhongzhimima1",
+      "unicode": "e724",
+      "unicode_decimal": 59172
+    },
+    {
+      "icon_id": "18210558",
+      "name": "表格-重置密码",
+      "font_class": "biaoge-zhongzhimima",
+      "unicode": "e662",
+      "unicode_decimal": 58978
+    },
+    {
+      "icon_id": "23863264",
+      "name": "重置密码",
+      "font_class": "zhongzhimima2",
+      "unicode": "e630",
+      "unicode_decimal": 58928
+    },
+    {
       "icon_id": "1878326",
       "name": "上传",
       "font_class": "shangchuan-copy",

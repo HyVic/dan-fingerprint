@@ -14,21 +14,27 @@
                 <el-button @click="reset(1)"><i class="iconfont icon-initial"></i>重置</el-button>
               </div>
             </div>
-            <div class="title">本地上传物种数据</div>
+            <div class="title">本地上传品种数据</div>
             <div class="table-info">
               <el-scrollbar height="100%">
-                <el-table stripe ref="leftTableRef" :data="leftTableData" style="width: 100%" @selection-change="leftSelectionChange" row-key="id">
-                  <el-table-column type="selection" width="40" />
-                  <el-table-column type="index" label="序号" width="55" />
-                  <el-table-column property="sortName" label="品种名称" />
-                  <el-table-column property="sortKind" label="作物种类" />
-                  <el-table-column property="approvalNumber" label="审定编号" />
-                  <el-table-column property="registrationNumber" label="登记编号" />
-                  <el-table-column property="sortSource" label="品种来源" />
+                <el-table stripe ref="leftTableRef" :data="leftTableData" style="width: 100%"
+                  @selection-change="leftSelectionChange" row-key="id">
+                  <el-table-column type="selection" />
+                  <el-table-column type="index" label="序号" width="60" />
+                  <el-table-column property="species_id" label="品种ID" />
+                  <el-table-column property="variety_name" label="品种名称" />
+                  <el-table-column property="variety_code" label="品种编号" />
+                  <el-table-column property="approval_number" label="审定编号" />
+                  <el-table-column property="registration_number" label="登记编号" />
+                  <el-table-column property="origin" label="品种来源" />
+                  <el-table-column property="organization_id" label="所属用户/机构" />
+                  <el-table-column property="is_system" label="是否是系统库数据" />
+                  <el-table-column property="probes_type" label="检测探针类型" />
                 </el-table>
               </el-scrollbar>
             </div>
-            <el-pagination :pageNum="pagination.pageNum" :page-size="pagination.pageSize" :total="pagination.total" @current-change="handlePagination"></el-pagination>
+            <el-pagination :pageNum="pagination.pageNum" :page-size="pagination.pageSize" :total="pagination.total"
+              @current-change="handlePagination"></el-pagination>
           </div>
           <div class="search-result-snp common">
             <div class="search-box">
@@ -44,18 +50,23 @@
             <div class="title">数据库数据</div>
             <div class="table-info">
               <el-scrollbar height="100%">
-                <el-table stripe ref="rightTableRef" :data="rightTableData" style="width: 100%" @selection-change="rightSelectionChange" row-key="id">
-                  <el-table-column type="selection" width="40" />
-                  <el-table-column type="index" label="序号" width="55" />
-                  <el-table-column property="sortName" label="品种名称" />
-                  <el-table-column property="sortKind" label="作物种类" />
-                  <el-table-column property="approvalNumber" label="审定编号" />
-                  <el-table-column property="registrationNumber" label="登记编号" />
-                  <el-table-column property="sortSource" label="品种来源" />
+                <el-table stripe ref="rightTableRef" :data="rightTableData" style="width: 100%"
+                  @selection-change="rightSelectionChange" row-key="id">
+                  <el-table-column type="selection" />
+                  <el-table-column type="index" label="序号" width="60" />
+                  <el-table-column property="species_id" label="品种ID" />
+                  <el-table-column property="variety_name" label="品种名称" />
+                  <el-table-column property="variety_code" label="品种编号" />
+                  <el-table-column property="approval_number" label="审定编号" />
+                  <el-table-column property="registration_number" label="登记编号" />
+                  <el-table-column property="origin" label="品种来源" />
+                  <el-table-column property="organization_id" label="所属用户/机构" />
+                  <el-table-column property="probes_type" label="检测探针类型" />
                 </el-table>
               </el-scrollbar>
             </div>
-            <el-pagination :pageNum="pagination1.pageNum" :page-size="pagination1.pageSize" :total="pagination1.total" @current-change="handlePagination1"></el-pagination>
+            <el-pagination :pageNum="pagination1.pageNum" :page-size="pagination1.pageSize" :total="pagination1.total"
+              @current-change="handlePagination1"></el-pagination>
           </div>
         </div>
         <div class="result" v-if="showResult">
@@ -76,16 +87,17 @@
                 <div class="content common" id="images">
                   <div class="item">
                     <!-- <img :src="allInfo.img" alt=""> -->
-                    <el-scrollbar height="100%">
-                      <site-echarts status="1"></site-echarts>
-                    </el-scrollbar>
+                    <!-- <el-scrollbar height="100%"> -->
+                    <site-echarts status="1"></site-echarts>
+                    <!-- </el-scrollbar> -->
                   </div>
                 </div>
               </div>
               <div class="chromosome common" id="chromosome">
-                <el-upload style="display: flex;" :on-change="handleUpload" accept="xls,xlsx" :auto-upload="false" :multiple="true">
+                <!--        <el-upload style="display: flex;" :on-change="handleUpload" accept="xls,xlsx" :auto-upload="false"
+                  :multiple="true">
                   <el-button type="primary">Click to upload</el-button>
-                </el-upload>
+                </el-upload> -->
                 <div class="table-info">
                   <el-scrollbar height="100%">
                     <el-table stripe ref="multipleTableRef" :data="uploadTableData" style="width: 100%">
@@ -125,16 +137,18 @@
   </div>
   <table-cell-detail v-if="showCellDetail" @close="showCellDetail = false"></table-cell-detail>
 </template>
-    
+
 <script setup lang="ts">
 import image from "../../assets/RZ2300021-SNP-2_vs_RZ2300002-SNP-2.png";
 import type { TableInstance } from "element-plus";
 import ElPagination from "../common/ElPagination.vue";
-import { ref, onUnmounted, watchEffect, nextTick } from "vue";
+import { ref, onUnmounted, watchEffect, nextTick, onMounted } from "vue";
 import SiteEcharts from "./SiteEcharts.vue";
 import TableCellDetail from "../information-search/TableCellDetail.vue";
+import { getAllVarieties } from "../../api/variety"
+import {useStore} from '../../store/index'
+const store = useStore()
 import * as XLSX from "xlsx";
-import { set } from "lodash";
 const uploadData = ref({
   searchName: "",
   searchNumber: "",
@@ -161,297 +175,94 @@ const reset = (type: number) => {
   }
 };
 interface User {
-  id: number;
-  sortName: string;
-  sortKind: string;
-  approvalNumber: string;
-  registrationNumber: string;
-  sortSource: string;
+  id: number,
+  species_id: number,
+  variety_name: string,
+  variety_code: string,
+  approval_number: string,
+  registration_number: string,
+  origin: string,
+  organization_id: number,
+  probes_type: string,
 }
 const selectedRows = ref<User[]>([]); //最终选择的需要进行对比的数据
 
 const leftTableRef = ref<TableInstance>();
 const leftSelection = ref<User[]>([]);
-const leftTableData: User[] = [
+let leftTableData: User[] = [
+  {
+    id: 0,
+    species_id: 0,
+    variety_name: 'string',
+    variety_code: 'string',
+    approval_number: 'string',
+    registration_number: 'string',
+    origin: 'string',
+    organization_id: 0,
+    probes_type: 'string'
+  },
   {
     id: 1,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
+    species_id: 1,
+    variety_name: 'string',
+    variety_code: 'string',
+    approval_number: 'string',
+    registration_number: 'string',
+    origin: 'string',
+    organization_id: 1,
+    probes_type: 'string'
   },
   {
     id: 2,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 3,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 4,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
+    species_id: 2,
+    variety_name: 'string',
+    variety_code: 'string',
+    approval_number: 'string',
+    registration_number: 'string',
+    origin: 'string',
+    organization_id: 2,
+    probes_type: 'string'
+  }
 ];
 const rightTableRef = ref<TableInstance>();
 const rightSelection = ref<User[]>([]);
-const rightTableData: User[] = [
+let rightTableData: User[] = [
+  {
+    id: 0,
+    species_id: 0,
+    variety_name: 'string',
+    variety_code: 'string',
+    approval_number: 'string',
+    registration_number: 'string',
+    origin: 'string',
+    organization_id: 0,
+    probes_type: 'string'
+  },
   {
     id: 1,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
+    species_id: 1,
+    variety_name: 'string',
+    variety_code: 'string',
+    approval_number: 'string',
+    registration_number: 'string',
+    origin: 'string',
+    organization_id: 1,
+    probes_type: 'string'
   },
   {
     id: 2,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 3,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 4,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 5,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 6,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 7,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 8,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 9,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 10,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 11,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 12,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 13,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 14,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 15,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 16,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 17,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 18,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 19,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 20,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 21,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 22,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 23,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 24,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 25,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 26,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 27,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 28,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 29,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
-  {
-    id: 30,
-    sortName: "string",
-    sortKind: "string",
-    approvalNumber: "string",
-    registrationNumber: "string",
-    sortSource: "string",
-  },
+    species_id: 2,
+    variety_name: 'string',
+    variety_code: 'string',
+    approval_number: 'string',
+    registration_number: 'string',
+    origin: 'string',
+    organization_id: 2,
+    probes_type: 'string'
+  }
 ];
 const leftSelectionChange = (selection: User[]) => {
-    handleAllSelectionChange(
+  handleAllSelectionChange(
     selection,
     leftTableRef.value!,
     // leftSelection.value,
@@ -459,31 +270,31 @@ const leftSelectionChange = (selection: User[]) => {
     leftTableData,
     rightTableRef.value!
   );
-/*   if (selection.length > 2 && selection.length < 4) { //如果选择了三条，则删除第一条
-    let del_row = selection.shift();
-    leftTableRef.value!.toggleRowSelection(del_row, false);
-  } else if (selection.length > 3) { //如果选择条数大于3条（全选的情况），则取数组前两条
-    leftTableRef.value!.clearSelection();
-    for (let i = 0; i < 2; i++) {
-      leftTableRef.value!.toggleRowSelection(leftTableData[i], true);
+  /*   if (selection.length > 2 && selection.length < 4) { //如果选择了三条，则删除第一条
+      let del_row = selection.shift();
+      leftTableRef.value!.toggleRowSelection(del_row, false);
+    } else if (selection.length > 3) { //如果选择条数大于3条（全选的情况），则取数组前两条
+      leftTableRef.value!.clearSelection();
+      for (let i = 0; i < 2; i++) {
+        leftTableRef.value!.toggleRowSelection(leftTableData[i], true);
+      }
     }
-  }
-  
-  if(selection.length > 1 && rightSelection.value.length > 0){// 左边已存在一条，右边已存在一条的情况，再次选择左边，则删除左边之前存在那条数据
-    let del_row = selection.shift();
-    leftTableRef.value!.toggleRowSelection(del_row, false);
-  }else if( rightSelection.value.length > 1){ // 右边已存在两条，当选择左边，则删除右边之前存在那两条数据的第一条
-    let del_row = rightSelection.value.shift();
-    rightTableRef.value!.toggleRowSelection(del_row, false);
-  }*/
-  leftSelection.value = leftTableRef.value!.getSelectionRows(); 
-  selectedRows.value = [...leftSelection.value, ...rightSelection.value ];
+    
+    if(selection.length > 1 && rightSelection.value.length > 0){// 左边已存在一条，右边已存在一条的情况，再次选择左边，则删除左边之前存在那条数据
+      let del_row = selection.shift();
+      leftTableRef.value!.toggleRowSelection(del_row, false);
+    }else if( rightSelection.value.length > 1){ // 右边已存在两条，当选择左边，则删除右边之前存在那两条数据的第一条
+      let del_row = rightSelection.value.shift();
+      rightTableRef.value!.toggleRowSelection(del_row, false);
+    }*/
+  leftSelection.value = leftTableRef.value!.getSelectionRows();
+  selectedRows.value = [...leftSelection.value, ...rightSelection.value];
   if (selectedRows.value.length > 2) {
     selectedRows.value = selectedRows.value.slice(0, 2);
   }
 };
 const rightSelectionChange = (selection: User[]) => {
-    handleAllSelectionChange(
+  handleAllSelectionChange(
     selection,
     rightTableRef.value!,
     // rightSelection.value,
@@ -491,22 +302,22 @@ const rightSelectionChange = (selection: User[]) => {
     rightTableData,
     leftTableRef.value!
   );
-/*   if (selection.length > 2 && selection.length < 4) {
-    let del_row = selection.shift();
-    rightTableRef.value!.toggleRowSelection(del_row, false);
-  } else if (selection.length > 3) {
-    rightTableRef.value!.clearSelection();
-    for (let i = 0; i < 2; i++) {
-      rightTableRef.value!.toggleRowSelection(rightTableData[i], true);
+  /*   if (selection.length > 2 && selection.length < 4) {
+      let del_row = selection.shift();
+      rightTableRef.value!.toggleRowSelection(del_row, false);
+    } else if (selection.length > 3) {
+      rightTableRef.value!.clearSelection();
+      for (let i = 0; i < 2; i++) {
+        rightTableRef.value!.toggleRowSelection(rightTableData[i], true);
+      }
     }
-  }
-  if(selection.length > 1 && leftSelection.value.length > 0){
-    let del_row = selection.shift();
-    rightTableRef.value!.toggleRowSelection(del_row, false);
-  }else if( leftSelection.value.length > 1){
-    let del_row = leftSelection.value.shift();
-    leftTableRef.value!.toggleRowSelection(del_row, false);
-  } */
+    if(selection.length > 1 && leftSelection.value.length > 0){
+      let del_row = selection.shift();
+      rightTableRef.value!.toggleRowSelection(del_row, false);
+    }else if( leftSelection.value.length > 1){
+      let del_row = leftSelection.value.shift();
+      leftTableRef.value!.toggleRowSelection(del_row, false);
+    } */
   rightSelection.value = rightTableRef.value!.getSelectionRows();
   selectedRows.value = [...leftSelection.value, ...rightSelection.value];
   if (selectedRows.value.length > 2) {
@@ -521,27 +332,22 @@ const handleAllSelectionChange = (
   selfTableData: any,
   otherRefTable: TableInstance
 ) => {
-  if (selection.length > 2 && selection.length < 4) {
+  if (selection.length > 2 && selection.length < 4) {//如果选择了三条，则删除第一条
     let del_row = selection.shift();
     refTable.toggleRowSelection(del_row, false);
-  } else if (selection.length > 3) {
+  } else if (selection.length > 3) {//如果选择条数大于3条（全选的情况），则取数组前两条
     refTable.clearSelection();
     for (let i = 0; i < 2; i++) {
       refTable.toggleRowSelection(selfTableData[i], true);
     }
   }
-  if(selection.length > 1 && otherSelection.length > 0){
+  if (selection.length > 1 && otherSelection.length > 0) {// 左边已存在一条，右边已存在一条的情况，再次选择左边，则删除左边之前存在那条数据
     let del_row = selection.shift();
     refTable.toggleRowSelection(del_row, false);
-  }else if( otherSelection.length > 1){
+  } else if (otherSelection.length > 1) {// 右边已存在两条，当选择左边，则删除右边之前存在那两条数据的第一条
     let del_row = otherSelection.shift();
     otherRefTable.toggleRowSelection(del_row, false);
   }
-  // selfSelection = refTable.getSelectionRows();
-  /* selectedRows.value = [...selfSelection, ...otherSelection ];
-  if (selectedRows.value.length > 2) {
-    selectedRows.value = selectedRows.value.slice(0, 2);
-  } */
 };
 const showResult = ref(false);
 const allInfo = ref({
@@ -689,14 +495,14 @@ const handleResize = () => {
     nextTick(() => {
       setTimeout(() => {
         if (window.innerWidth >= 1500 && window.innerWidth < 1900) {
-          (document as any).getElementById("images").style.height = `${
-            (document as any).getElementById("all-info").clientHeight - 10
-          }px`;
+          (document as any).getElementById("images").style.height = `${(document as any).getElementById("all-info").clientHeight - 10
+            }px`;
         }
         if (window.innerWidth >= 1901) {
-          (document as any).getElementById("chromosome").style.height = `${
-            (document as any).getElementById("left").clientHeight - 12
-          }px`;
+          (document as any).getElementById("chromosome").style.height = `${(document as any).getElementById("left").clientHeight - 12
+            }px`;
+          (document as any).getElementById("images").style.height = `${(document as any).getElementById("chromosome").clientHeight - (document as any).getElementById("all-info").clientHeight - 12
+            }px`
         }
       }, 0);
     });
@@ -710,6 +516,7 @@ const pagination = ref<any>({
 const handlePagination = (currentPage: any) => {
   pagination.value.pageNum = currentPage.pageNum;
   pagination.value.pageSize = currentPage.pageSize;
+  getAllVarietiesDataLeft()
 };
 const pagination1 = ref<any>({
   pageNum: 1,
@@ -719,6 +526,7 @@ const pagination1 = ref<any>({
 const handlePagination1 = (currentPage: any) => {
   pagination1.value.pageNum = currentPage.pageNum;
   pagination1.value.pageSize = currentPage.pageSize;
+  getAllVarietiesDataRight()
 };
 const showCellDetail = ref(false);
 const getCellDetail = (type: string) => {
@@ -775,10 +583,40 @@ const translateField = (data) => {
   });
   return arr;
 };
+const getAllVarietiesDataLeft = async () => { //获取左边本地上传的品种数据
+  let obj = {
+    page: pagination.value.pageNum,
+    page_size: pagination.value.pageSize,
+    species_id: store.currentSpeciesId,
+    is_system: false
+  }
+  getAllVarieties(obj).then((res) => {
+    console.log('res=====', res)
+    pagination.value.total = res.total
+    leftTableData = res.data
+  })
+}
+const getAllVarietiesDataRight = async () => { //获取右边的系统品种数据
+  let obj = {
+    page: pagination.value.pageNum,
+    page_size: pagination.value.pageSize,
+    species_id: store.currentSpeciesId,
+    is_system: true
+  }
+  getAllVarieties(obj).then((res) => {
+    pagination.value.total = res.total
+    rightTableData = res.data
+    console.log('rightTableData=====', rightTableData)
+  })
+}
 watchEffect(() => {
   handleResize();
   window.addEventListener("resize", handleResize);
 });
+onMounted(() => {
+  getAllVarietiesDataLeft()
+  getAllVarietiesDataRight()
+})
 onUnmounted(() => {
   window.removeEventListener("resize", handleResize);
 });
@@ -789,10 +627,12 @@ onUnmounted(() => {
   align-items: $align-items;
   justify-content: $justify-content;
 }
+
 @mixin size($width, $height) {
   width: $width;
   height: $height;
 }
+
 .fingerprint-search {
   @include size(calc(100% - 20px), calc(100% - 20px));
   @include layout(center, space-between);
@@ -800,42 +640,46 @@ onUnmounted(() => {
   padding: 10px;
   margin: 10px;
   box-sizing: border-box;
+
   .search-result {
     @include size(100%, 100%);
     border: 1px solid #efefef;
     border-radius: 5px;
     overflow-x: hidden;
+
     :deep .el-scrollbar__view {
-      height: 100%;
+      height: calc(100% - 10px);
     }
+
     .choose {
       @include layout(center, space-between);
       height: calc(100% - 50px);
+
       @media screen and (max-width: 1500px) {
         flex-direction: column;
+
         .common {
           width: calc(100% - 10px);
           height: 50%;
         }
       }
     }
+
     @media screen and (min-width: 1901px) {
-      :deep .el-scrollbar__view {
-        height: calc(100% - 40px);
-      }
+
       .chromosome {
         .table-info {
           height: 100% !important;
+
           :deep .el-table td.el-table__cell div,
-          :deep
-            .el-table--enable-row-transition
-            .el-table__body
-            td.el-table__cell {
+          :deep .el-table--enable-row-transition .el-table__body td.el-table__cell {
             padding: 0;
           }
+
           .common_cell {
             cursor: pointer;
             padding: 7px 12px !important;
+
             &:hover {
               background-color: #e2edfb;
             }
@@ -843,27 +687,35 @@ onUnmounted(() => {
         }
       }
     }
+
     .result {
       @media screen and (min-width: 1901px) {
         height: calc(100% - 70px);
       }
+
       @include size(calc(100% - 10px), auto);
+
       .search-result- {
         width: calc(100% - 0px);
       }
+
       .result-content {
         display: flex;
         flex-wrap: wrap;
+
         .left {
           @include layout(flex-start, space-between);
         }
+
         @include layout(flex-start, space-between);
+
         .all-info {
           // width: 100%;
           min-width: 230px;
           padding: 5px;
           display: flex;
           flex-wrap: wrap;
+
           div {
             width: calc(100% - 12px);
             display: flex;
@@ -876,6 +728,7 @@ onUnmounted(() => {
               font-size: 14px;
               padding: 15px 5px;
             }
+
             span:first-child {
               font-size: 16px;
               font-weight: bold;
@@ -887,71 +740,90 @@ onUnmounted(() => {
             }
           }
         }
+
         .content {
           box-sizing: border-box;
+
           // width: 100%;
           .item {
             width: 100%;
             @include layout(flex-start, center);
+
             img {
               width: 100%;
               height: auto !important;
             }
           }
         }
+
         @media screen and (min-width: 1901px) {
           height: calc(100% - 50px);
+
           .left {
             width: 55%;
             height: 100%;
             flex-direction: column;
+
             .all-info {
               width: 100%;
               padding: 0;
+
               div {
                 width: calc(25% - 12px);
               }
             }
+
             .content {
               width: calc(100% - 10px);
             }
           }
+
           .chromosome {
             width: calc(45% - 13px);
           }
         }
+
         @media screen and (max-width: 1900px) {
           .left {
             width: 100%;
+
             .all-info {
               width: 22%;
               padding: 0;
+
               div {
                 width: calc(100% - 12px);
               }
             }
+
             .content {
               width: 78%;
+
               :deep .el-scrollbar__view {
                 height: unset !important;
               }
             }
           }
+
           .chromosome {
             width: calc(100% - 10px);
           }
         }
+
         @media screen and (max-width: 1500px) {
           .left {
             width: 100%;
             flex-direction: column;
+
             .all-info {
               width: 100%;
               padding: 0;
+
               div {
                 width: calc(25% - 12px);
               }
             }
+
             .content {
               width: 100%;
             }
@@ -959,11 +831,13 @@ onUnmounted(() => {
         }
       }
     }
+
     .common {
       height: calc(100% - 10px);
       margin: 5px;
       border: 1px solid #efefef;
       border-radius: 5px;
+
       .title {
         font-size: 16px;
         font-weight: bold;
@@ -971,39 +845,47 @@ onUnmounted(() => {
         padding: 10px;
         background-color: #f5f5f5;
       }
+
       .content {
         height: calc(100% - 65px);
         display: flex;
         flex-wrap: wrap;
         // padding: 10px;
         overflow: hidden;
+
         .item {
-          @include size(calc(100% / 4 - 12px), auto);
+          @include size(calc(100% / 4 - 12px), 100%);
           box-sizing: border-box;
           text-align: center;
+
           img {
             width: 270px;
             height: 230px;
             // aspect-ratio: 1;
           }
+
           .single {
             font-size: 15px;
             // text-align: left;
           }
         }
       }
+
       .table-info {
         height: calc(100% - 155px);
         overflow: auto;
         border-bottom: 1px solid #f1f1f1;
       }
+
       .search-box {
         @include size(calc(100% - 20px), 55px);
         @include layout(center, space-between);
         padding: 0 10px;
+
         .search-input {
           width: calc(100% - 220px);
           text-align: left;
+
           :deep .el-input {
             width: 40%;
             max-width: 250px;
@@ -1011,6 +893,7 @@ onUnmounted(() => {
             height: 40px;
           }
         }
+
         /*         .search-btn{
           width: 200px;
             @include layout(center,flex-end);
@@ -1026,12 +909,15 @@ onUnmounted(() => {
             color: white;
             border: 0;
             height: 30px;
+
             &:first-child {
               background-color: green;
             }
+
             &:last-child {
               background-color: #fc9700;
             }
+
             &:hover {
               opacity: 0.8;
             }
@@ -1039,31 +925,42 @@ onUnmounted(() => {
         }
       }
     }
+
     .search-result-snp {
       width: calc(50% - 10px);
     }
+
     .dialog-footer {
       text-align: right;
       padding-right: 5px;
       height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+
       button {
         color: white;
         height: 30px;
+
         .iconfont {
           padding-right: 10px;
         }
+
         &:first-child {
           color: #fc9700;
           border-color: #fc970061;
         }
+
         &:nth-child(2) {
           color: #409eff;
           border-color: #409eff63;
         }
+
         &:last-child {
           color: green;
           border-color: #00800075;
         }
+
         &:hover {
           opacity: 0.7;
         }
@@ -1071,7 +968,11 @@ onUnmounted(() => {
     }
   }
 }
+
 :deep .el-table th.el-table__cell {
   color: #656565 !important;
+}
+:deep .el-scrollbar__bar.is-horizontal{
+  visibility: hidden;
 }
 </style>

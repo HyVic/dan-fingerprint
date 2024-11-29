@@ -6,12 +6,7 @@
         <i class="iconfont icon-cha1" @click="Close"></i>
       </div>
       <div class="dialog-basic-info common-cont">
-        <el-form :model="info">
-          <!--             <el-form-item label="品种类型">
-                  <el-select v-model="info.type">
-                    <el-option v-for="item in sortList" :key="item.value" :label="item.label" :value="item.value"/>
-                  </el-select>
-                </el-form-item> -->
+        <el-form>
           <el-form-item>
             <el-upload ref="upload" class="icon" drag action="#" :on-exceed="handleExceed" :on-change="getFileInfo" :auto-upload="false" :limit="1">
               <i class="iconfont icon-shujushangchuan3"></i>
@@ -25,6 +20,9 @@
           </el-form-item>
           <el-form-item></el-form-item>
         </el-form>
+        <el-form :model="info">
+
+        </el-form>
       </div>
       <div class="dialog-footer">
         <el-button @click="submitUpload"><i class="iconfont icon-p-footer"></i>提交</el-button>
@@ -34,6 +32,8 @@
 </template>
   <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { postFile } from "../../api/file";
+import { ElMessage } from "element-plus";
 const emits = defineEmits(["close"]);
 const Close = () => {
   emits("close");
@@ -42,6 +42,7 @@ const info = ref({
   id: "",
   type: "先玉335",
 });
+const uploadFile = ref<File>();
 const sortList = ref([
   {
     id: 1,
@@ -85,19 +86,32 @@ import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
 const upload = ref<UploadInstance>();
 const getFileInfo = (file: UploadRawFile) => {
   console.log(22, file);
+  uploadFile.value = file.raw;
 };
 const handleExceed: UploadProps["onSuccess"] = (files) => {
-  console.log(44, files);
   upload.value!.clearFiles();
   const file = files[0] as UploadRawFile;
-  console.log(111, file);
-    file.uid = genFileId();
-    upload.value!.handleStart(file);
+  file.uid = genFileId();
+  upload.value!.handleStart(file);
 };
 const submitUpload = () => {
-  console.log(info.value);
+  console.log(11, upload.value);
+  console.log(22, uploadFile.value);
+  let formData = new FormData();
+  formData.append("file", uploadFile.value);
+  formData.append("file_type", "fileType");
+  postFile(formData).then((res) => {
+    console.log(res);
+    if (res.code === 0) {
+      ElMessage({
+        showClose: true,
+        message: res.message,
+        type: "success",
+      });
+      emits("close");
+    }
+  });
   upload.value!.submit();
-  emits("close");
 };
 onMounted(() => {
   console.log(1111111);
@@ -187,8 +201,8 @@ onMounted(() => {
           :deep .el-textarea__inner {
             min-height: 200px !important;
           }
-          :deep .el-upload-list__item:hover{
-            .el-upload-list__item-file-name{
+          :deep .el-upload-list__item:hover {
+            .el-upload-list__item-file-name {
               color: #606266 !important;
             }
           }
