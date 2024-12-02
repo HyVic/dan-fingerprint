@@ -3,7 +3,7 @@
         <el-pagination
             v-model:current-page="props.pageNum"
             v-model:page-size="props.pageSize"
-            :page-sizes="[10, 30, 100, 200]"
+            :page-sizes="[10, 20, 30, 50]"
             :disabled="disabled"
             :background="background"
             layout="total, sizes, prev, pager, next"

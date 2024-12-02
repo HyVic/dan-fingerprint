@@ -1,5 +1,7 @@
 <template>
-    <el-table stripe ref="multipleTableRef" :data="tableData" style="width: 100%"
+  <el-scrollbar>
+    <div class="dialog-basic-info common-cont">
+      <el-table stripe ref="multipleTableRef" :data="tableData" style="width: 100%"
         @selection-change="handleSelectionChange">
         <el-table-column type="selection" />
         <el-table-column type="index" label="序号" width="60" />
@@ -11,18 +13,28 @@
         <el-table-column property="origin" label="品种来源" />
         <el-table-column property="organization_id" label="所属用户/机构" />
         <el-table-column property="probes_type" label="检测探针类型" />
-    </el-table>
+      </el-table>
+    </div>
+  </el-scrollbar>
+  <div class="dialog-footer">
+    <el-pagination :pageNum="pagination.pageNum" :page-size="pagination.pageSize" :total="pagination.total"
+      @current-change="handlePagination"></el-pagination>
+    <!-- <el-button><i class="iconfont icon-p-footer"></i>清空面板</el-button> -->
+    <el-button @click="multipleSelectionData"><i class="iconfont icon-lujing-6"></i>比对</el-button>
+    <!-- <el-button><i class="iconfont icon-chanpinchaxun"></i>近似筛查</el-button> -->
+  </div>
 </template>
 <script setup lang="ts">
 import type { TableInstance } from 'element-plus'
 import { getAllVarieties } from "../../api/variety"
+import ElPagination from '../common/ElPagination.vue'
 import { ref, onMounted } from 'vue'
-import {useStore} from '../../store/index'
+import { useStore } from '../../store/index'
 const store = useStore()
 const props = defineProps({
-  page: Number,
-  pageSize: Number,
-  is:Boolean
+  is: Boolean,
+  varietyName: String,
+  varietyCode: String
 })
 const emit = defineEmits(['update:modelValue'])
 interface User {
@@ -38,51 +50,99 @@ interface User {
 }
 const multipleTableRef = ref<TableInstance>()
 const multipleSelection = ref<User[]>([])
-let tableData: User[] = [
-  {
-    id: 1,
-    species_id: 1,
-    variety_name: 'string',
-    variety_code: 'string',
-    approval_number: 'string',
-    registration_number: 'string',
-    origin: 'string',
-    organization_id: 0,
-    probes_type: 'string',
-  },
-  {
-    id: 2,
-    species_id: 2,
-    variety_name: 'string',
-    variety_code: 'string',
-    approval_number: 'string',
-    registration_number: 'string',
-    origin: 'string',
-    organization_id: 0,
-    probes_type: 'string',
-  },
-]
+const tableData = ref<User[]>([])
+const pagination = ref<any>({
+  pageNum: 1,
+  pageSize: 10,
+  total: 0
+})
 const handleSelectionChange = (val: User[]) => {
   multipleSelection.value = val
 }
-const count = ref(20)
 const getAllVarietiesData = () => {
-  console.log('props.page=====', props)
   let obj = {
-    page: props.page,
-    page_size: props.pageSize,
+    page: pagination.value.pageNum,
+    page_size: pagination.value.pageSize,
     species_id: store.currentSpeciesId,
-    is_system: props.is
+    is_system: props.is,
+    variety_name: props.varietyName,
+    variety_code: props.varietyCode
   }
   getAllVarieties(obj).then((res) => {
-    console.log('count.value*2=====', res)
-    emit('update:modelValue', count.value)
+    if (res.code === 0) {
+      tableData.value = [...res.data]
+      pagination.value.total = res.total
+    }
   })
+}
+const handlePagination = (currentPage: any) => {
+  pagination.value.pageNum = currentPage.pageNum
+  pagination.value.pageSize = currentPage.pageSize
+  getAllVarietiesData()
+}
+const multipleSelectionData = () => {
+  emit('update:modelValue', multipleSelection.value)
 }
 onMounted(() => {
   getAllVarietiesData()
 })
-/* watchEffect(() => {
-  getAllVarietiesData()
-}) */
+defineExpose({
+  getAllVarietiesData
+})
 </script>
+<style lang="scss" scoped>
+@mixin layout($align, $justify) {
+  display: flex;
+  align-items: $align;
+  justify-content: $justify;
+}
+
+.common-cont {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+
+  .title {
+    text-align: left;
+    padding-bottom: 10px;
+  }
+}
+
+.dialog-basic-info {
+  height: 100%;
+  min-height: 300px;
+
+  :deep .el-table {
+    border: 1px solid #e5e5e5;
+    border-radius: 2px;
+
+    .el-table__body-wrapper {
+      min-height: 200px;
+    }
+  }
+}
+
+.dialog-footer {
+  border-top: 1px solid #e5e5e5;
+  padding: 10px;
+  text-align: right;
+  @include layout(center, space-between);
+
+  .iconfont {
+    padding-right: 10px;
+    font-size: 18px;
+  }
+
+  button {
+    outline: none;
+  }
+}
+
+.el-scrollbar {
+  height: calc(100% - 75px) !important;
+}
+
+:deep .el-table th.el-table__cell {
+  color: #656565 !important;
+}
+</style>

@@ -16,20 +16,9 @@
             </div>
             <div class="title">本地上传品种数据</div>
             <div class="table-info">
-<!--               <el-table stripe ref="multipleTableRef" :data="tableData" style="width: 100%"
-                @selection-change="handleSelectionChange1">
-                <el-table-column type="selection" />
-                <el-table-column type="index" label="序号" width="60" />
-                <el-table-column property="species_id" label="品种ID" />
-                <el-table-column property="variety_name" label="品种名称" />
-                <el-table-column property="variety_code" label="品种编号" />
-                <el-table-column property="approval_number" label="审定编号" />
-                <el-table-column property="registration_number" label="登记编号" />
-                <el-table-column property="origin" label="品种来源" />
-                <el-table-column property="organization_id" label="所属用户/机构" />
-                <el-table-column property="probes_type" label="检测探针类型" />
-              </el-table> -->
-              <VarietyDataTable v-model="pagination.total" :page="pagination.pageNum" :page-size="pagination.pageSize" :is="false"></VarietyDataTable>
+              <VarietyDataTable ref="childTableRef" :is="false" @update:model-value="updateUploadData"
+                :variety-name="uploadData.searchName" :variety-code="uploadData.searchNumber">
+              </VarietyDataTable>
             </div>
           </div>
         </div>
@@ -56,13 +45,8 @@
             </div>
           </div>
         </div>
-        <div class="dialog-footer">
-          <el-pagination v-if="!showResult" :pageNum="pagination.pageNum" :page-size="pagination.pageSize"
-            :total="pagination.total" @current-change="handlePagination"></el-pagination>
-          <div v-if="showResult"></div>
-          <!-- <el-button v-if="!showResult"><i class="iconfont icon-p-footer"></i>清空面板</el-button> -->
-          <el-button v-if="!showResult" @click="showResult = true"><i class="iconfont icon-lujing-6"></i>比对</el-button>
-          <!-- <el-button v-if="!showResult" @click="showResult = true"><i class="iconfont icon-chanpinchaxun"></i>近似筛查</el-button> -->
+        <div class="dialog-footer" v-if="showResult">
+          <div></div>
           <el-button v-if="showResult" @click="showResult = false"><i class="iconfont icon-initial"></i>返回</el-button>
         </div>
       </el-scrollbar>
@@ -72,11 +56,8 @@
 
 <script setup lang="ts">
 import image from '../../assets/zhanwei2.jpg'
-import type { TableInstance } from 'element-plus'
-import ElPagination from '../common/ElPagination.vue'
+import { ElMessage } from "element-plus";
 import VarietyDataTable from "../common/VarietyDataTable.vue"
-
-// import { getAllVarieties } from "../../api/variety"
 import { ref, onUnmounted, watchEffect, nextTick, onMounted } from 'vue';
 const uploadData = ref({
   searchName: '',
@@ -86,52 +67,27 @@ const exitData = ref({
   searchName: '',
   searchNumber: ''
 })
+interface ChildTable {
+  getAllVarietiesData: () => void;
+}
+const childTableRef = ref<ChildTable | null>(null);
 const submitSearch = (type: number) => {
-  console.log(type)
   if (type === 1) {
-    console.log(uploadData.value)
-  } else {
-    console.log(exitData.value)
+    childTableRef.value?.getAllVarietiesData()
   }
 }
 const reset = (type: number) => {
   if (type === 1) {
     uploadData.value.searchName = ''
     uploadData.value.searchNumber = ''
+    setTimeout(() => {
+      childTableRef.value?.getAllVarietiesData()
+    }, 100);
   } else {
     exitData.value.searchName = ''
     exitData.value.searchNumber = ''
   }
 }
-/* interface User {
-  id: number,
-  species_id: number,
-  variety_name: string,
-  variety_code: string,
-  approval_number: string,
-  registration_number: string,
-  origin: string,
-  organization_id: number,
-  probes_type: string,
-}
-const multipleTableRef = ref<TableInstance>() */
-/* const multipleSelection = ref<User[]>([])
-let tableData: User[] = [
-  {
-    id: 0,
-    species_id: 0,
-    variety_name: 'string',
-    variety_code: 'string',
-    approval_number: 'string',
-    registration_number: 'string',
-    origin: 'string',
-    organization_id: 0,
-    probes_type: 'string'
-  }
-]
-const handleSelectionChange1 = (val: User[]) => {
-  multipleSelection.value = val
-} */
 const showResult = ref(false)
 interface ChromosomeInfo {
   name: string,
@@ -490,21 +446,14 @@ const handlePagination = (currentPage: any) => {
   pagination.value.pageSize = currentPage.pageSize
   // getAllVarietiesData()
 }
-/* const getAllVarietiesData = async () => {
-  let obj = {
-    page: pagination.value.pageNum,
-    page_size: pagination.value.pageSize,
-    species_id: 1,
-    is_system: false
+const updateUploadData = (data: any) => {
+  if (data.length > 0) {
+    showResult.value = true
+  } else {
+    ElMessage.warning('请选择比对数据')
   }
-  getAllVarieties(obj).then((res) => {
-    console.log('res=====', res)
-    pagination.value.total = res.total
-    tableData = res.data
-  })
-} */
+}
 watchEffect(() => {
-  console.log('pagination.value.total=====', pagination.value.total)
   handleResize()
   window.addEventListener('resize', handleResize);
 })
@@ -546,7 +495,7 @@ onUnmounted(() => {
     }
 
     .choose {
-      height: calc(100% - 60px);
+      height: 100%;
       @include layout(center, space-between)
     }
 
@@ -623,7 +572,6 @@ onUnmounted(() => {
 
       .table-info {
         height: calc(100% - 100px);
-        overflow: auto;
       }
 
       .search-box {
@@ -712,5 +660,9 @@ onUnmounted(() => {
 
 :deep .el-table th.el-table__cell {
   color: #656565 !important;
+}
+
+:deep .el-scrollbar__bar.is-horizontal {
+  visibility: hidden !important;
 }
 </style>

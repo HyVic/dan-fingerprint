@@ -99,7 +99,6 @@ const sortList = ref([
 ]);
 const showAddSpecies = ref(false);
 const handleChange = (val: any) => {
-  console.log(11111, val);
 };
 const handleClick = (value: any) => {
 
@@ -108,7 +107,6 @@ const handleClick = (value: any) => {
 };
 const addSpecies = () => {
   showAddSpecies.value = true;
-  console.log("changeSpecies",showAddSpecies.value);
 };
 const handleChoose = () => {
   centerDialogVisible.value = true;
@@ -139,7 +137,6 @@ const LogOut = () => {
   store.logout()
 }
 watchEffect(() => {
-  console.log("store.speciesList", store.speciesList);
   sortList.value = store.speciesList;
   navList.value.forEach((item) => {
     if (router.currentRoute.value.path.includes(item.label)) {

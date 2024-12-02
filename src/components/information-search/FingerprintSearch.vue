@@ -3,6 +3,9 @@
     <div class="search-box">
       <div class="search-input">
         <el-input v-model="search.varietyName" type="text" style="width: 250px" placeholder="请输入品种名称" />
+        <!-- <el-select v-model="value" filterable placeholder="请输入品种名称" style="width: 240px">
+          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select> -->
         <el-input v-model="search.varietyNumber" type="number" style="width: 250px" placeholder="请输入品种编号" />
       </div>
       <div class="search-btn">
@@ -134,8 +137,8 @@ import { ref, watchEffect, onUnmounted, nextTick, onMounted } from "vue";
 import { useStore } from '../../store/index'
 const store = useStore()
 const search = ref({
-  varietyName: "先玉335",
-  varietyNumber: "BGG253-2",
+  varietyName: "",
+  varietyNumber: "",
 });
 const searchName = ref("");
 const searchNumber = ref("");
@@ -152,10 +155,10 @@ const reset = () => {
   getAllVarietyStatistics()
 };
 const allInfo = ref({
-  validCount: "19400/97%",
-  referCount: "12780/64%",
-  altCount: "6581/33%",
-  mixCount: "39/0.1%",
+  validCount: "",
+  referCount: "",
+  altCount: "",
+  mixCount: "",
 });
 interface SNPInfo {
   number: number;
@@ -396,38 +399,41 @@ const sheetTableData = ref<ChromosomeInfo[]>([]);
 const getAllVarietyStatistics = async () => {
   let obj = {
     species_id: store.currentSpeciesId,
-    variety_name: search.value.varietyName,
+    // variety_name: search.value.varietyName,
+    variety_name: 'RZ2300252',
     variety_code: search.value.varietyNumber,
   }
   getVarietyStatistics(obj).then((res) => {
     if (res.code === 0) {
       let total_stats = res.data.total_stats;
       let total = res.data.total_stats.total;
-      allInfo.value.validCount = total_stats.valid_count + "/" + Number(total_stats.valid_count/total).toFixed(2) + "%";
-      allInfo.value.referCount = total_stats.ref_count + "/" + Number(total_stats.ref_count/total).toFixed(2) + "%";
-      allInfo.value.altCount = total_stats.alt_count + "/" + Number(total_stats.alt_count/total).toFixed(2) + "%";
-      allInfo.value.mixCount = total_stats.het_count + "/" + Number(total_stats.het_count/total).toFixed(2) + "%";
+      allInfo.value.validCount = total_stats.valid_count + "/" + Number(total_stats.valid_count / total).toFixed(2) + "%";
+      allInfo.value.referCount = total_stats.ref_count + "/" + Number(total_stats.ref_count / total).toFixed(2) + "%";
+      allInfo.value.altCount = total_stats.alt_count + "/" + Number(total_stats.alt_count / total).toFixed(2) + "%";
+      allInfo.value.mixCount = total_stats.het_count + "/" + Number(total_stats.het_count / total).toFixed(2) + "%";
       probesType.value = res.data.probes_type;
-      res.data.chrom_stats.forEach(item => {
-        genesList.value.push({title:1, genes:item.genes})
+      console.log('probesType.value-----', res.data.chrom_stats.length);
+      res.data.chrom_stats?.forEach(item => {
+        genesList.value.push({ title: 1, genes: item.genes })
         sheetTableData.value.push({
           number: item.chromosome,
-          validCount: item.valid_count + "/" + Number(item.valid_count/item.total).toFixed(2) + "%",
-          referCount: item.ref_count + "/" + Number(item.ref_count/item.total).toFixed(2) + "%",
-          altCount: item.alt_count + "/" + Number(item.alt_count/item.total).toFixed(2) + "%",
-          mixCount: item.het_count + "/" + Number(item.het_count/item.total).toFixed(2) + "%",
+          validCount: item.valid_count + "/" + Number(item.valid_count / item.total).toFixed(2) + "%",
+          referCount: item.ref_count + "/" + Number(item.ref_count / item.total).toFixed(2) + "%",
+          altCount: item.alt_count + "/" + Number(item.alt_count / item.total).toFixed(2) + "%",
+          mixCount: item.het_count + "/" + Number(item.het_count / item.total).toFixed(2) + "%",
         });
       });
+      console.log('sheetTableData.value-----', sheetTableData.value);
     }
   })
 }
 onMounted(() => {
   getAllVarietyStatistics()
-  let arr = commonSheet("/chrom.xlsx");
+  /* let arr = commonSheet("/chrom.xlsx");
   setTimeout(async () => {
     sheetTableData.value = arr;
     console.log(12, sheetTableData.value);
-  }, 1000);
+  }, 1000); */
 });
 onUnmounted(() => {
   window.removeEventListener("resize", handleResize);

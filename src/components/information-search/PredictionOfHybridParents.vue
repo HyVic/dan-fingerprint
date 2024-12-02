@@ -19,21 +19,9 @@
                         </div>
                         <div class="title">本地上传品种数据</div>
                         <div class="table-info">
-<!--                             <el-table stripe ref="multipleTableRef" :data="tableData" style="width: 100%"
-                                @selection-change="handleSelectionChange1">
-                                <el-table-column type="selection" />
-                                <el-table-column type="index" label="序号" width="60" />
-                                <el-table-column property="species_id" label="品种ID" />
-                                <el-table-column property="variety_name" label="品种名称" />
-                                <el-table-column property="variety_code" label="品种编号" />
-                                <el-table-column property="approval_number" label="审定编号" />
-                                <el-table-column property="registration_number" label="登记编号" />
-                                <el-table-column property="origin" label="品种来源" />
-                                <el-table-column property="organization_id" label="所属用户/机构" />
-                                <el-table-column property="probes_type" label="检测探针类型" />
-
-                            </el-table> -->
-                            <VarietyDataTable v-model="pagination.total" :page="pagination.pageNum" :page-size="pagination.pageSize" :is="false"></VarietyDataTable>
+                            <VarietyDataTable ref="childTableRef" :is="false" @update:model-value="updateUploadData"
+                                :variety-name="uploadData.searchName" :variety-code="uploadData.searchNumber">
+                            </VarietyDataTable>
                         </div>
                     </div>
                 </div>
@@ -68,16 +56,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="dialog-footer">
-                    <el-pagination v-if="!showResult" :pageNum="pagination.pageNum" :page-size="pagination.pageSize"
-                        :total="pagination.total" @current-change="handlePagination"></el-pagination>
-                    <div v-if="showResult"></div>
-                    <!-- <el-button v-if="!showResult"><i class="iconfont icon-p-footer"></i>清空面板</el-button> -->
-                    <el-button v-if="!showResult" @click="showResult = true"><i
-                            class="iconfont icon-lujing-6"></i>比对</el-button>
-                    <!-- <el-button v-if="!showResult" @click="showResult = true"><i class="iconfont icon-chanpinchaxun"></i>近似筛查</el-button> -->
-                    <el-button v-if="showResult" @click="showResult = false"><i
-                            class="iconfont icon-initial"></i>返回</el-button>
+                <div class="dialog-footer" v-if="showResult">
+                    <div></div>
+                    <el-button @click="showResult = false"><i class="iconfont icon-initial"></i>返回</el-button>
                 </div>
             </el-scrollbar>
         </div>
@@ -86,7 +67,7 @@
 
 <script setup lang="ts">
 import type { TableInstance } from 'element-plus'
-import ElPagination from '../common/ElPagination.vue'
+import { ElMessage } from "element-plus";
 import { ref, onUnmounted, watchEffect, nextTick } from 'vue';
 import VarietyDataTable from "../common/VarietyDataTable.vue"
 const uploadData = ref({
@@ -97,55 +78,28 @@ const exitData = ref({
     searchName: '',
     searchNumber: ''
 })
+interface ChildTable {
+    getAllVarietiesData: () => void;
+}
+const childTableRef = ref<ChildTable | null>(null);
 const submitSearch = (type: number) => {
-    console.log(type)
     if (type === 1) {
-        console.log(uploadData.value)
-    } else {
-        console.log(exitData.value)
+        childTableRef.value?.getAllVarietiesData()
     }
 }
 const reset = (type: number) => {
     if (type === 1) {
         uploadData.value.searchName = ''
         uploadData.value.searchNumber = ''
+        setTimeout(() => {
+            childTableRef.value?.getAllVarietiesData()
+        }, 100);
     } else {
         exitData.value.searchName = ''
         exitData.value.searchNumber = ''
     }
 }
-/* interface User {
-    id: number,
-    species_id: number,
-    variety_name: string,
-    variety_code: string,
-    approval_number: string,
-    registration_number: string,
-    origin: string,
-    organization_id: number,
-    probes_type: string,
-} */
 const multipleTableRef = ref<TableInstance>()
-/* const multipleSelection = ref<User[]>([])
-let tableData: User[] = [
-    {
-        id: 0,
-        species_id: 0,
-        variety_name: 'string',
-        variety_code: 'string',
-        approval_number: 'string',
-        registration_number: 'string',
-        origin: 'string',
-        organization_id: 0,
-        probes_type: 'string'
-    }
-]
-const handleSelectionChange1 = (val: User[]) => {
-    multipleSelection.value = val
-}
-const handleSelectionChange2 = (val: User[]) => {
-    multipleSelection.value = val
-} */
 const showResult = ref(false)
 interface ChromosomeInfo {
     name: string,
@@ -154,541 +108,13 @@ interface ChromosomeInfo {
 const resultData = ref([
     {
         sortName: '杂交样本：RM2300035',
-        ComparisonResults: [
-            /*             {
-                            ID: 'RZ2300002.SNP',
-                            HeterozygosityRate: '0.149%',
-                            similarity: '98.837%'
-                        },
-                        {
-                            ID: 'RZ2300001.SNP',
-                            HeterozygosityRate: '1.330%',
-                            similarity: '98.721%'
-                        },
-                        {
-                            ID: 'RZ2300021.SNP',
-                            HeterozygosityRate: '6.97%',
-                            similarity: '97.896%'
-                        },
-                        {
-                            ID: 'RZ2300074.SNP',
-                            HeterozygosityRate: '2.360%',
-                            similarity: '96.019%'
-                        },
-                        {
-                            ID: 'CRX093613',
-                            HeterozygosityRate: '0.208%',
-                            similarity: '95.361%'
-                        },
-                        {
-                            ID: 'RZ2300006.SNP',
-                            HeterozygosityRate: '0.195%',
-                            similarity: '94.917%'
-                        },
-                        {
-                            ID: 'RZ2300038.SNP',
-                            HeterozygosityRate: '0.395%',
-                            similarity: '94.842%'
-                        },
-                        {
-                            ID: 'RZ2300076.SNP',
-                            HeterozygosityRate: '3.460%',
-                            similarity: '94.682'
-                        },
-                        {
-                            ID: 'RZ2300019.SNP',
-                            HeterozygosityRate: '0.195%',
-                            similarity: '94.60%'
-                        },
-                        {
-                            ID: 'RZ2300033.SNP',
-                            HeterozygosityRate: '0.584%',
-                            similarity: '94.586%'
-                        },
-                        {
-                            ID: 'RZ2300015.SNP',
-                            HeterozygosityRate: '0.205%',
-                            similarity: '94.575%'
-                        },
-                        {
-                            ID: 'RZ2300014.SNP',
-                            HeterozygosityRate: '0.251%',
-                            similarity: '94.502%'
-                        },
-                        {
-                            ID: 'RZ2300067.SNP',
-                            HeterozygosityRate: '0.246%',
-                            similarity: '94.366%'
-                        },
-                        {
-                            ID: 'CRX093646',
-                            HeterozygosityRate: '0.158%',
-                            similarity: '93.87%'
-                        },
-                        {
-                            ID: 'RZ2300008.SNP',
-                            HeterozygosityRate: '9.340%',
-                            similarity: '93.870%'
-                        },
-                        {
-                            ID: 'RZ2300061.SNP',
-                            HeterozygosityRate: '2.640%',
-                            similarity: '93.144%'
-                        },
-                        {
-                            ID: 'RZ2300068.SNP',
-                            HeterozygosityRate: '7.550%',
-                            similarity: '92.911%'
-                        },
-                        {
-                            ID: 'CRX039322',
-                            HeterozygosityRate: '0.997%',
-                            similarity: '92.863%'
-                        },
-                        {
-                            ID: 'D2004558',
-                            HeterozygosityRate: '0.173%',
-                            similarity: '92.744%'
-                        },
-                        {
-                            ID: 'D2004629',
-                            HeterozygosityRate: '0.204%',
-                            similarity: '92.708%'
-                        }, */
-        ],
-        ComparisonResults2: [
-            /*             {
-                            combination: '预测组合1',
-                            Parent1: 'RZ2300002.SNP',
-                            Parent2: 'RZ2300021.SNP',
-                            HomozygousSite: '99.88%​',
-                            HeterozygosityRate: '95.40%',
-                            OverallConsistencyRate: '98.11%'
-                        },
-                        {
-                            combination: '预测组合2',
-                            Parent1: 'RZ2300001.SNP',
-                            Parent2: 'RZ2300021.SNP',
-                            HomozygousSite: '90.37%',
-                            HeterozygosityRate: '79.92%',
-                            OverallConsistencyRate: '86.12%'
-                        },
-                        {
-                            combination: '预测组合3',
-                            Parent1: 'RZ2300021.SNP',
-                            Parent2: 'RZ2300006.SNP',
-                            HomozygousSite: '83.99%',
-                            HeterozygosityRate: '74.72%',
-                            OverallConsistencyRate: '80.51%'
-                        },
-                        {
-                            combination: '预测组合4',
-                            Parent1: 'RZ2300021.SNP',
-                            Parent2: 'RZ2300067.SNP',
-                            HomozygousSite: '83.83%',
-                            HeterozygosityRate: '74.57%',
-                            OverallConsistencyRate: '80.34%'
-                        },
-                        {
-                            combination: '预测组合5',
-                            Parent1: 'RZ2300021.SNP',
-                            Parent2: 'RZ2300038.SNP',
-                            HomozygousSite: '83.76%',
-                            HeterozygosityRate: '74.38%',
-                            OverallConsistencyRate: '80.22%'
-                        },
-                        {
-                            combination: '预测组合6',
-                            Parent1: 'RZ2300021.SNP',
-                            Parent2: 'RZ2300033.SNP',
-                            HomozygousSite: '75.67%',
-                            HeterozygosityRate: '58.75%',
-                            OverallConsistencyRate: '68.82%'
-                        },
-                        {
-                            combination: '预测组合7',
-                            Parent1: 'RZ2300021.SNP',
-                            Parent2: 'RZ2300015.SNP',
-                            HomozygousSite: '75.68%',
-                            HeterozygosityRate: '58.70%',
-                            OverallConsistencyRate: '68.80%'
-                        },
-                        {
-                            combination: '预测组合8',
-                            Parent1: 'RZ2300021.SNP',
-                            Parent2: 'RZ2300019.SNP',
-                            HomozygousSite: '75.53%',
-                            HeterozygosityRate: '56.60%',
-                            OverallConsistencyRate: '67.59%'
-                        },
-                        {
-                            combination: '预测组合9',
-                            Parent1: 'RZ2300021.SNP',
-                            Parent2: 'RZ2300014.SNP',
-                            HomozygousSite: '73.07%',
-                            HeterozygosityRate: '53.53%',
-                            OverallConsistencyRate: '64.89%'
-                        },
-                        {
-                            combination: '预测组合10',
-                            Parent1: 'RZ2300021.SNP',
-                            Parent2: 'RZ2300061.SNP',
-                            HomozygousSite: '72.30%',
-                            HeterozygosityRate: '53.82%',
-                            OverallConsistencyRate: '64.70%'
-                        },
-            
-            
-                        {
-                            combination: '预测组合11',
-                            Parent1: 'RZ2300021.SNP',
-                            Parent2: 'RZ2300008.SNP',
-                            HomozygousSite: '72.57%​',
-                            HeterozygosityRate: '52.86%',
-                            OverallConsistencyRate: '64.39%'
-                        },
-                        {
-                            combination: '预测组合12',
-                            Parent1: 'RZ2300021.SNP',
-                            Parent2: 'RZ2300068.SNP',
-                            HomozygousSite: '72.28%',
-                            HeterozygosityRate: '53.03%',
-                            OverallConsistencyRate: '64.31%'
-                        },
-                        {
-                            combination: '预测组合13',
-                            Parent1: 'RZ2300002.SNP',
-                            Parent2: 'RZ2300022.SNP',
-                            HomozygousSite: '71.47%',
-                            HeterozygosityRate: '52.40%',
-                            OverallConsistencyRate: '63.95%'
-                        },
-                        {
-                            combination: '预测组合14',
-                            Parent1: 'RZ2300001.SNP',
-                            Parent2: 'RZ2300022.SNP',
-                            HomozygousSite: '70.43%',
-                            HeterozygosityRate: '52.42%',
-                            OverallConsistencyRate: '63.82%'
-                        },
-                        {
-                            combination: '预测组合15',
-                            Parent1: 'RZ2300006.SNP',
-                            Parent2: 'RZ2300022.SNP',
-                            HomozygousSite: '71.36%',
-                            HeterozygosityRate: '52.19%',
-                            OverallConsistencyRate: '63.56%'
-                        },
-                        {
-                            combination: '预测组合16',
-                            Parent1: 'RZ2300067.SNP',
-                            Parent2: 'RZ2300022.SNP',
-                            HomozygousSite: '65.29%',
-                            HeterozygosityRate: '53.40%',
-                            OverallConsistencyRate: '63.13%'
-                        },
-                        {
-                            combination: '预测组合17',
-                            Parent1: 'RZ2300038.SNP',
-                            Parent2: 'RZ2300022.SNP',
-                            HomozygousSite: '69.65%',
-                            HeterozygosityRate: '51.29%',
-                            OverallConsistencyRate: '63.09%'
-                        },
-                        {
-                            combination: '预测组合18',
-                            Parent1: 'RZ2300033.SNP',
-                            Parent2: 'RZ2300022.SNP',
-                            HomozygousSite: '65.09%',
-                            HeterozygosityRate: '53.24%',
-                            OverallConsistencyRate: '62.93%'
-                        },
-                        {
-                            combination: '预测组合19',
-                            Parent1: 'RZ2300021.SNP',
-                            Parent2: 'RZ2300024.SNP',
-                            HomozygousSite: '65.08%',
-                            HeterozygosityRate: '53.20%',
-                            OverallConsistencyRate: '62.91%'
-                        },
-                        {
-                            combination: '预测组合20',
-                            Parent1: 'RZ2300015.SNP',
-                            Parent2: 'RZ2300022.SNP',
-                            HomozygousSite: '69.80%',
-                            HeterozygosityRate: '51.19%',
-                            OverallConsistencyRate: '62.42%'
-                        }, */
-        ]
+        ComparisonResults: [],
+        ComparisonResults2: []
     },
     {
         sortName: '杂交样本：RM2300038',
-        ComparisonResults: [
-            /*             {
-                            ID: 'RZ2300004.SNP',
-                            HeterozygosityRate: '0.192%',
-                            similarity: '98.602%'
-                        },
-                        {
-                            ID: 'RZ2300060.SNP',
-                            HeterozygosityRate: '1.330%',
-                            similarity: '98.537%'
-                        },
-                        {
-                            ID: 'RZ2300055.SNP',
-                            HeterozygosityRate: '0.308%',
-                            similarity: '87.994%'
-                        },
-                        {
-                            ID: 'RZ2300017.SNP',
-                            HeterozygosityRate: '1.020%',
-                            similarity: '85.300%'
-                        },
-                        {
-                            ID: 'RZ2300009.SNP',
-                            HeterozygosityRate: '0.856%',
-                            similarity: '85.154%'
-                        },
-                        {
-                            ID: 'RZ2300063.SNP',
-                            HeterozygosityRate: '1.520%',
-                            similarity: '74.074%'
-                        },
-                        {
-                            ID: 'RZ2300065.SNP',
-                            HeterozygosityRate: '1.510%',
-                            similarity: '74.018%'
-                        },
-                        {
-                            ID: 'RZ2300030.SNP',
-                            HeterozygosityRate: '3.560%',
-                            similarity: '72.524%'
-                        },
-                        {
-                            ID: 'RZ2300024.SNP',
-                            HeterozygosityRate: '0.388%',
-                            similarity: '71.941%'
-                        },
-                        {
-                            ID: 'RZ2300032.SNP',
-                            HeterozygosityRate: '0.716%',
-                            similarity: '70.629%'
-                        },
-                        {
-                            ID: 'RZ2300021.SNP',
-                            HeterozygosityRate: '7.000%',
-                            similarity: '69.915%'
-                        },
-                        {
-                            ID: 'RZ2300045.SNP',
-                            HeterozygosityRate: '9.320%',
-                            similarity: '69.694%'
-                        },
-                        {
-                            ID: 'RZ2300018.SNP',
-                            HeterozygosityRate: '4.190%',
-                            similarity: '69.573%'
-                        },
-                        {
-                            ID: 'RZ2300031.SNP',
-                            HeterozygosityRate: '0.187%',
-                            similarity: '69.501%'
-                        },
-                        {
-                            ID: 'RZ2300052.SNP',
-                            HeterozygosityRate: '0.800%',
-                            similarity: '69.213%'
-                        },
-                        {
-                            ID: 'RZ2300022.SNP',
-                            HeterozygosityRate: '0.532%',
-                            similarity: '69.108%'
-                        },
-                        {
-                            ID: 'RZ2300008.SNP',
-                            HeterozygosityRate: '9.440%',
-                            similarity: '68.991%'
-                        },
-                        {
-                            ID: 'RZ2300043.SNP',
-                            HeterozygosityRate: '0.304%',
-                            similarity: '68.846%'
-                        },
-                        {
-                            ID: 'RZ2300059.SNP',
-                            HeterozygosityRate: '0.284%',
-                            similarity: '68.737%'
-                        },
-                        {
-                            ID: 'RZ2300026.SNP',
-                            HeterozygosityRate: '1.290%',
-                            similarity: '67.806%'
-                        }, */
-        ],
-        ComparisonResults2: [
-            /*             {
-                            combination: '预测组合1',
-                            Parent1: 'RZ2300004.SNP',
-                            Parent2: 'RZ2300060.SNP',
-                            HomozygousSite: '99.88%​',
-                            HeterozygosityRate: '95.40%',
-                            OverallConsistencyRate: '98.11%'
-                        },
-                        {
-                            combination: '预测组合2',
-                            Parent1: 'RZ2300004.SNP',
-                            Parent2: 'RZ2300055.SNP',
-                            HomozygousSite: '90.37%',
-                            HeterozygosityRate: '79.92%',
-                            OverallConsistencyRate: '86.12%'
-                        },
-                        {
-                            combination: '预测组合3',
-                            Parent1: 'RZ2300004.SNP',
-                            Parent2: 'RZ2300010.SNP',
-                            HomozygousSite: '83.99%',
-                            HeterozygosityRate: '74.72%',
-                            OverallConsistencyRate: '80.51%'
-                        },
-                        {
-                            combination: '预测组合4',
-                            Parent1: 'RZ2300004.SNP',
-                            Parent2: 'RZ2300017.SNP',
-                            HomozygousSite: '83.83%',
-                            HeterozygosityRate: '74.57%',
-                            OverallConsistencyRate: '80.34%'
-                        },
-                        {
-                            combination: '预测组合5',
-                            Parent1: 'RZ2300004.SNP',
-                            Parent2: 'RZ2300009.SNP',
-                            HomozygousSite: '83.76%',
-                            HeterozygosityRate: '74.38%',
-                            OverallConsistencyRate: '80.22%'
-                        },
-                        {
-                            combination: '预测组合6',
-                            Parent1: 'RZ2300060.SNP',
-                            Parent2: 'RZ2300063.SNP',
-                            HomozygousSite: '75.67%',
-                            HeterozygosityRate: '58.75%',
-                            OverallConsistencyRate: '68.82%'
-                        },
-                        {
-                            combination: '预测组合7',
-                            Parent1: 'RZ2300060.SNP',
-                            Parent2: 'RZ2300065.SNP',
-                            HomozygousSite: '75.68%',
-                            HeterozygosityRate: '58.70%',
-                            OverallConsistencyRate: '68.80%'
-                        },
-                        {
-                            combination: '预测组合8',
-                            Parent1: 'RZ2300060.SNP',
-                            Parent2: 'RZ2300024.SNP',
-                            HomozygousSite: '75.53%',
-                            HeterozygosityRate: '56.60%',
-                            OverallConsistencyRate: '67.59%'
-                        },
-                        {
-                            combination: '预测组合9',
-                            Parent1: 'RZ2300060.SNP',
-                            Parent2: 'RZ2300018.SNP',
-                            HomozygousSite: '73.07%',
-                            HeterozygosityRate: '53.53%',
-                            OverallConsistencyRate: '64.89%'
-                        },
-                        {
-                            combination: '预测组合10',
-                            Parent1: 'RZ2300060.SNP',
-                            Parent2: 'RZ2300021.SNP',
-                            HomozygousSite: '72.30%',
-                            HeterozygosityRate: '53.82%',
-                            OverallConsistencyRate: '64.70%'
-                        },
-            
-            
-                        {
-                            combination: '预测组合11',
-                            Parent1: 'RZ2300060.SNP',
-                            Parent2: 'RZ2300031.SNP',
-                            HomozygousSite: '72.57%​',
-                            HeterozygosityRate: '52.86%',
-                            OverallConsistencyRate: '64.39%'
-                        },
-                        {
-                            combination: '预测组合12',
-                            Parent1: 'RZ2300060.SNP',
-                            Parent2: 'RZ2300022.SNP',
-                            HomozygousSite: '72.28%',
-                            HeterozygosityRate: '53.03%',
-                            OverallConsistencyRate: '64.31%'
-                        },
-                        {
-                            combination: '预测组合13',
-                            Parent1: 'RZ2300060.SNP',
-                            Parent2: 'RZ2300032.SNP',
-                            HomozygousSite: '71.47%',
-                            HeterozygosityRate: '52.40%',
-                            OverallConsistencyRate: '63.95%'
-                        },
-                        {
-                            combination: '预测组合14',
-                            Parent1: 'RZ2300004.SNP',
-                            Parent2: 'RZ2300030.SNP',
-                            HomozygousSite: '70.43%',
-                            HeterozygosityRate: '52.42%',
-                            OverallConsistencyRate: '63.82%'
-                        },
-                        {
-                            combination: '预测组合15',
-                            Parent1: 'RZ2300060.SNP',
-                            Parent2: 'RZ2300052.SNP',
-                            HomozygousSite: '71.36%',
-                            HeterozygosityRate: '52.19%',
-                            OverallConsistencyRate: '63.56%'
-                        },
-                        {
-                            combination: '预测组合16',
-                            Parent1: 'RZ2300060.SNP',
-                            Parent2: 'RZ2300010.SNP',
-                            HomozygousSite: '65.29%',
-                            HeterozygosityRate: '53.40%',
-                            OverallConsistencyRate: '63.13%'
-                        },
-                        {
-                            combination: '预测组合17',
-                            Parent1: 'RZ2300060.SNP',
-                            Parent2: 'RZ2300030.SNP',
-                            HomozygousSite: '69.65%',
-                            HeterozygosityRate: '51.29%',
-                            OverallConsistencyRate: '63.09%'
-                        },
-                        {
-                            combination: '预测组合18',
-                            Parent1: 'RZ2300060.SNP',
-                            Parent2: 'RZ2300017.SNP',
-                            HomozygousSite: '65.09%',
-                            HeterozygosityRate: '53.24%',
-                            OverallConsistencyRate: '62.93%'
-                        },
-                        {
-                            combination: '预测组合19',
-                            Parent1: 'RZ2300060.SNP',
-                            Parent2: 'RZ2300009.SNP',
-                            HomozygousSite: '65.08%',
-                            HeterozygosityRate: '53.20%',
-                            OverallConsistencyRate: '62.91%'
-                        },
-                        {
-                            combination: '预测组合20',
-                            Parent1: 'RZ2300004.SNP',
-                            Parent2: 'RZ2300043.SNP',
-                            HomozygousSite: '69.80%',
-                            HeterozygosityRate: '51.19%',
-                            OverallConsistencyRate: '62.42%'
-                        }, */
-        ]
+        ComparisonResults: [],
+        ComparisonResults2: []
     },
 ])
 const handleResize = () => {
@@ -704,6 +130,13 @@ const pagination = ref<any>({
 const handlePagination = (currentPage: any) => {
     pagination.value.pageNum = currentPage.pageNum
     pagination.value.pageSize = currentPage.pageSize
+}
+const updateUploadData = (data: any) => {
+    if (data.length > 0) {
+        showResult.value = true
+    } else {
+        ElMessage.warning('请选择比对数据')
+    }
 }
 watchEffect(() => {
     if (showResult.value) {
@@ -749,19 +182,18 @@ onUnmounted(() => {
         }
 
         .choose {
-            @include layout(center, space-between);
-            height: calc(100% - 60px);
+            height: 100%;
         }
 
         .result {
-            @include size(calc(100% - 10px), auto);
+            @include size(calc(100% - 10px), calc(100% - 55px));
 
             :deep .el-table th.el-table__cell {
                 background-color: #f5f5f5cf;
             }
 
             .search-result- {
-                width: calc(100% - 0px);
+                width: auto;
             }
 
             .result-content {
@@ -770,14 +202,6 @@ onUnmounted(() => {
                 .content {
                     box-sizing: border-box;
                     width: 60%;
-                    /* .item{
-            width: calc(100% - 12px);
-            @include layout(center,center);
-            img{
-              width: 95%;
-              height: auto !important;
-            }
-          } */
                 }
 
                 .chromosome {
@@ -787,7 +211,7 @@ onUnmounted(() => {
         }
 
         .common {
-            height: calc(100% - 10px);
+            height: 100%;
             margin: 5px;
             border: 1px solid #efefef;
             border-radius: 5px;
@@ -830,7 +254,6 @@ onUnmounted(() => {
             .table-info {
                 width: 100%;
                 height: calc(100% - 100px);
-                overflow: auto;
             }
 
             .search-box {
@@ -845,15 +268,6 @@ onUnmounted(() => {
                     }
                 }
 
-                /*         .search-btn{
-            @include layout(center,flex-end);
-            button:first-child{
-            margin-right: 10px;
-            }  
-            .iconfont{
-                padding-right: 10px
-            } 
-        } */
                 .search-btn {
                     button {
                         color: white;
@@ -923,5 +337,9 @@ onUnmounted(() => {
 
 :deep .el-table .cell {
     white-space: nowrap;
+}
+
+:deep .el-scrollbar__bar.is-horizontal {
+    visibility: hidden !important;
 }
 </style>

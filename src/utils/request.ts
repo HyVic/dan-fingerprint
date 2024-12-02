@@ -61,7 +61,6 @@ const config: TAxiosOption = {
     baseURL: configUrl.apiUrl,
     // baseURL: import.meta.env.VITE_APP_BASE_API   // 本地api接口地址
 }
-console.log('import.meta.env', import.meta.env.VITE_APP_BASE_API, configUrl.apiUrl)
 class Http {
     service;
     constructor(config: TAxiosOption) {
@@ -81,7 +80,6 @@ class Http {
         /* 响应拦截 */
         this.service.interceptors.response.use((response: AxiosResponse<any>) => {
             // debugger;
-            console.log('response==>', response.data)
             // return response.data
             switch (response.data.code) {
                 case -1:

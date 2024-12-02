@@ -189,78 +189,10 @@ const selectedRows = ref<User[]>([]); //最终选择的需要进行对比的数�
 
 const leftTableRef = ref<TableInstance>();
 const leftSelection = ref<User[]>([]);
-let leftTableData: User[] = [
-  {
-    id: 0,
-    species_id: 0,
-    variety_name: 'string',
-    variety_code: 'string',
-    approval_number: 'string',
-    registration_number: 'string',
-    origin: 'string',
-    organization_id: 0,
-    probes_type: 'string'
-  },
-  {
-    id: 1,
-    species_id: 1,
-    variety_name: 'string',
-    variety_code: 'string',
-    approval_number: 'string',
-    registration_number: 'string',
-    origin: 'string',
-    organization_id: 1,
-    probes_type: 'string'
-  },
-  {
-    id: 2,
-    species_id: 2,
-    variety_name: 'string',
-    variety_code: 'string',
-    approval_number: 'string',
-    registration_number: 'string',
-    origin: 'string',
-    organization_id: 2,
-    probes_type: 'string'
-  }
-];
+const leftTableData = ref<User[]>([]);
 const rightTableRef = ref<TableInstance>();
 const rightSelection = ref<User[]>([]);
-let rightTableData: User[] = [
-  {
-    id: 0,
-    species_id: 0,
-    variety_name: 'string',
-    variety_code: 'string',
-    approval_number: 'string',
-    registration_number: 'string',
-    origin: 'string',
-    organization_id: 0,
-    probes_type: 'string'
-  },
-  {
-    id: 1,
-    species_id: 1,
-    variety_name: 'string',
-    variety_code: 'string',
-    approval_number: 'string',
-    registration_number: 'string',
-    origin: 'string',
-    organization_id: 1,
-    probes_type: 'string'
-  },
-  {
-    id: 2,
-    species_id: 2,
-    variety_name: 'string',
-    variety_code: 'string',
-    approval_number: 'string',
-    registration_number: 'string',
-    origin: 'string',
-    organization_id: 2,
-    probes_type: 'string'
-  }
-];
+const rightTableData = ref<User[]>([]);
 const leftSelectionChange = (selection: User[]) => {
   handleAllSelectionChange(
     selection,
@@ -351,14 +283,14 @@ const handleAllSelectionChange = (
 };
 const showResult = ref(false);
 const allInfo = ref({
-  validCount: "19152",
-  anumCount1: "17810",
-  anumCount2: "1342",
-  bnumCount1: "17810",
-  bnumCount2: "1342",
-  validCountAll: "54.29% (10397)",
-  validCount1: "57.56% (10240)",
-  validCount2: "0.82% (157)",
+  validCount: "",
+  anumCount1: "",
+  anumCount2: "",
+  bnumCount1: "",
+  bnumCount2: "",
+  validCountAll: "",
+  validCount1: "",
+  validCount2: "",
   img: image,
 });
 interface ChromosomeInfo {
@@ -588,12 +520,14 @@ const getAllVarietiesDataLeft = async () => { //获取左边本地上传的品�
     page: pagination.value.pageNum,
     page_size: pagination.value.pageSize,
     species_id: store.currentSpeciesId,
-    is_system: false
+    is_system: false,
+    variety_name: uploadData.value.searchName,
+    variety_code: uploadData.value.searchNumber
   }
   getAllVarieties(obj).then((res) => {
     console.log('res=====', res)
     pagination.value.total = res.total
-    leftTableData = res.data
+    leftTableData.value = res.data
   })
 }
 const getAllVarietiesDataRight = async () => { //获取右边的系统品种数据
@@ -601,11 +535,13 @@ const getAllVarietiesDataRight = async () => { //获取右边的系统品种数�
     page: pagination.value.pageNum,
     page_size: pagination.value.pageSize,
     species_id: store.currentSpeciesId,
-    is_system: true
+    is_system: true,
+    variety_name: exitData.value.searchName,
+    variety_code: exitData.value.searchNumber
   }
   getAllVarieties(obj).then((res) => {
     pagination.value.total = res.total
-    rightTableData = res.data
+    rightTableData.value = res.data
     console.log('rightTableData=====', rightTableData)
   })
 }
